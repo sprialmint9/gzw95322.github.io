@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="keywords" content="undefined">
+  <meta name="description" content="郭志伟的前端小窝">
+  <meta name="author" content="gzw">
+  <meta name="robots" content="undefined">
+  <meta name="msapplication-TileColor" content="#455A64">
+  <meta name="theme-color" content="#455A64">
+  
+    <title>
+      
+        vue-i18n、cube-ui 国际化 |
+          
+            sprialmint
+    </title>
+    
+      <link rel="icon" href="/favicon.ico">
+      <!-- <link rel='stylesheet' id='open-sans-css'  href='https://fonts.lug.ustc.edu.cn/css?family=Open+Sans%3A300italic%2C400italic%2C600italic%2C300%2C400%2C600&#038;subset=latin%2Clatin-ext' type='text/css' media='all' /> -->
+      
+      
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="//at.alicdn.com/t/font_596123_b7axjvh0br1z6w29.css">
+</head>
+<body>
+    
+<header id="header" class="animited clearfix">
+  <div class="header-bg"></div>
+    <h1>sprialmint <small>郭志伟的前端小窝</small></h1>
+    <button type="button" class="nav-toggle">
+       <span></span>
+       <span></span>
+       <span></span>
+    </button>
+    <nav>
+      
+      
+      <a href="/">Home</a>
+    
+      
+      <a href="/archives">Archives</a>
+    
+      
+      <a href="/life">Life</a>
+    
+      
+      <a href="/about">About</a>
+    
+    </nav>
+</header>
+    <article id="article">
+            <section>
+    <summary class="title">
+        vue-i18n、cube-ui 国际化    </summary>
+    
+            <div class="date">
+                周五 2019-03-01 00:00
+            </div>
+            
+                <p class="sub">
+                    </p><p>项目结构截图</p>
+<a id="more"></a>
+<p><img src="data:image/jpg;base64,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" alt="1550134905925"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add vue-i18n</span><br></pre></td></tr></table></figure>
+<p>i18n.js</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">"vue"</span>;</span><br><span class="line"><span class="keyword">import</span> VueI18n <span class="keyword">from</span> <span class="string">"vue-i18n"</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; Locale &#125; <span class="keyword">from</span> <span class="string">"cube-ui"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 语言包</span></span><br><span class="line"><span class="keyword">import</span> zh <span class="keyword">from</span> <span class="string">"./langs/zh-CN"</span>;</span><br><span class="line"><span class="keyword">import</span> en <span class="keyword">from</span> <span class="string">"./langs/en"</span>;</span><br><span class="line"><span class="keyword">import</span> cubeZH <span class="keyword">from</span> <span class="string">"cube-ui/src/locale/lang/zh-CN"</span>;</span><br><span class="line"><span class="keyword">import</span> cubeEN <span class="keyword">from</span> <span class="string">"cube-ui/src/locale/lang/en-US"</span>;</span><br><span class="line"></span><br><span class="line">Vue.use(VueI18n);</span><br><span class="line">Vue.use(Locale)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> messages = &#123;</span><br><span class="line">  <span class="string">'en'</span>: en,</span><br><span class="line">  <span class="string">'zh-CN'</span>: zh</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> cubeLangs = &#123;</span><br><span class="line">  en: cubeEN,</span><br><span class="line">  <span class="string">'zh-CN'</span>: cubeZH</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> lang = navigator.language || navigator.userLanguage; <span class="comment">// 语言标识,</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> i18n = <span class="keyword">new</span> VueI18n(&#123;</span><br><span class="line">    locale: lang, <span class="comment">// 语言标识,</span></span><br><span class="line">    messages,</span><br><span class="line">    </span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">// cube-ui i18n</span></span><br><span class="line">Locale.use(lang, cubeLangs[lang])</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> i18n</span><br></pre></td></tr></table></figure>
+<p>en.js(zh.js一样)</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">    hello: <span class="string">'good good study, day day up!'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>main.js中引用</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> i18n <span class="keyword">from</span> <span class="string">'./i18n/i18n'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> Vue(&#123;</span><br><span class="line">  i18n,</span><br><span class="line">  render: <span class="function"><span class="params">h</span> =&gt;</span> h(App)</span><br><span class="line">&#125;).$mount(<span class="string">"#app"</span>);</span><br></pre></td></tr></table></figure>
+<p>页面中调用</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> <span class="tag">&lt;<span class="name">span</span>&gt;</span></span><br><span class="line">     &#123;&#123; $t("hello") &#125;&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br></pre></td></tr></table></figure>
+                <p></p>
+                <div class="clearfix">
+                    <div class="tags pull-left">
+                        
+                            
+
+
+<span class="tag">vue-i18n</span> <span class="tag">国际化</span> <span class="tag">cube-ui</span>
+                                
+                    </div>
+                    <div class="share pull-right">
+                          
+<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+   
+
+                    </div>
+                </div>
+                <div class="license">
+    <p><strong>原文链接：</strong><a href="http://www.sprialmint.com/2019/03/01/vue-i18n、cube-ui 国际化/">http://www.sprialmint.com/2019/03/01/vue-i18n、cube-ui 国际化/</a></p>
+    <p><strong>版权声明：</strong>自由转载-非商用-非衍生-保持署名| <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">Creative Commons BY-NC-ND 4.0</a></p>
+</div>
+                      
+   
+   <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zNTAyNC8xMTU2MA==">
+	<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+	</script>
+<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+
+</section>
+    </article>
+    
+<footer>
+    <div>&copy; 2019 gzw
+  powered_by &nbsp;<a href="http://hexo.io/" target="_blank">Hexo</a> &nbsp;theme by &nbsp;<a href="https://github.com/gzw95322/hexo-theme-stingy" target="_blank">stingy</a></div>
+    <div class="footer-menu">
+  <a href="http://www.miitbeian.gov.cn/" target="_blank">鲁ICP备16001540号</a>
+</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+
+  <link rel="stylesheet" href="/css/gallery.css">
+  <!-- fancybox is 3.x GPLv3 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+
+<script src="/js/script.js"></script>
+
+
+<div id="backtotop" class="animited pullback"><em></em><i></i><span>BACK<br>TO<br>TO<br>TOP</span></div>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?faa764cb53bbf9988c91a8fa2857a4d7";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+   
+    
+</body>
+
+</html>
