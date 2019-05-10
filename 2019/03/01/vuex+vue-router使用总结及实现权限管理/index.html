@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="keywords" content="undefined">
+  <meta name="description" content="郭志伟的前端小窝">
+  <meta name="author" content="gzw">
+  <meta name="robots" content="undefined">
+  <meta name="msapplication-TileColor" content="#455A64">
+  <meta name="theme-color" content="#455A64">
+  
+    <title>
+      
+        vuex和vue-router使用总结及实现权限管理 |
+          
+            sprialmint
+    </title>
+    
+      <link rel="icon" href="/favicon.ico">
+      <!-- <link rel='stylesheet' id='open-sans-css'  href='https://fonts.lug.ustc.edu.cn/css?family=Open+Sans%3A300italic%2C400italic%2C600italic%2C300%2C400%2C600&#038;subset=latin%2Clatin-ext' type='text/css' media='all' /> -->
+      
+      
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="//at.alicdn.com/t/font_596123_b7axjvh0br1z6w29.css">
+</head>
+<body>
+    
+<header id="header" class="animited clearfix">
+  <div class="header-bg"></div>
+    <h1>sprialmint <small>郭志伟的前端小窝</small></h1>
+    <button type="button" class="nav-toggle">
+       <span></span>
+       <span></span>
+       <span></span>
+    </button>
+    <nav>
+      
+      
+      <a href="/">Home</a>
+    
+      
+      <a href="/archives">Archives</a>
+    
+      
+      <a href="/life">Life</a>
+    
+      
+      <a href="/about">About</a>
+    
+    </nav>
+</header>
+    <article id="article">
+            <section>
+    <summary class="title">
+        vuex和vue-router使用总结及实现权限管理    </summary>
+    
+            <div class="date">
+                周五 2019-03-01 00:00
+            </div>
+            
+                <p class="sub">
+                    <blockquote>
+<p>vuex和vue-router使用总结及实现权限管理整理</p>
+</blockquote>
+<a id="more"></a>
+</p><h2 id="vue-router"><a href="#vue-router" class="headerlink" title="vue-router"></a>vue-router</h2><h3 id="01-404页面实现"><a href="#01-404页面实现" class="headerlink" title="01 - 404页面实现"></a>01 - 404页面实现</h3><p>通过vue-router中配置通配符<code>*</code>来实现, 但要放到路由配置的最后</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">new</span> Router(&#123;</span><br><span class="line">  routes: [</span><br><span class="line">    &#123; <span class="attr">path</span>: <span class="string">'/'</span>, <span class="attr">name</span>: <span class="string">"index"</span>, <span class="attr">component</span>: <span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">import</span>(<span class="string">"./views/Index.vue"</span>) &#125;,</span><br><span class="line">    &#123; <span class="attr">path</span>: <span class="string">'*'</span>, <span class="attr">name</span>: <span class="string">"pageNotFound"</span>, <span class="attr">component</span>: <span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">import</span>(<span class="string">"./components/404.vue"</span>) &#125;,</span><br><span class="line">  ]</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="02-路由模式切换"><a href="#02-路由模式切换" class="headerlink" title="02 - 路由模式切换"></a>02 - 路由模式切换</h3><p>vue-router默认的是hash模式, 也可以换成history模式,但是页面一刷新就会报404,history是浏览器做的处理, 没有响应到服务器, 所有要想history模式不报错,需要服务器配置一个后备页面.</p>
+<h3 id="03-路由嵌套"><a href="#03-路由嵌套" class="headerlink" title="03 - 路由嵌套"></a>03 - 路由嵌套</h3><p>ng中的ui-router来做多个路由放置在同一个页面的效果, 是直接在页面上加入多个<code>ui-view</code>即可.</p>
+<p>但是在vue-router中可不是这样的, 需要在一个路由下加入<code>children</code>, 在页面上调用时,也只能在同一个路径下调用才行.</p>
+<p>也就是说在ng中路由嵌套,你的孩子也可能是他的孩子, 在vue-router中你的孩子就是你的孩子…😶</p>
+<h3 id="04-导航守卫"><a href="#04-导航守卫" class="headerlink" title="04 - 导航守卫"></a>04 - 导航守卫</h3><p>需要在页面进入/离开时,做一些操作,比如说埋点, 权限管理,都可以用导航守卫做, 导航守卫分为组件私有的和全局的.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 全局</span></span><br><span class="line">router.beforeEach(<span class="function">(<span class="params">to, <span class="keyword">from</span>, next</span>) =&gt;</span> &#123;</span><br><span class="line">    next();</span><br><span class="line">&#125;);</span><br><span class="line"> router.afterEach(<span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125;);</span><br></pre></td></tr></table></figure>
+<p>全局守卫中的<code></code>beforeEach<code>是有参数的,如果要想进入到下一个页面,或其他页面,</code>next`是必不可少的.</p>
+<p>相反<code>afterEach</code>没有参数,不会影响流程.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 组件内的</span></span><br><span class="line"><span class="keyword">const</span> Foo = &#123;</span><br><span class="line">  template: <span class="string">`...`</span>,</span><br><span class="line">  beforeRouteEnter (to, <span class="keyword">from</span>, next) &#123;</span><br><span class="line">    <span class="comment">// 在渲染该组件的对应路由被 confirm 前调用</span></span><br><span class="line">  &#125;,</span><br><span class="line">  beforeRouteUpdate (to, <span class="keyword">from</span>, next) &#123;</span><br><span class="line">    <span class="comment">// 在当前路由改变，但是该组件被复用时调用</span></span><br><span class="line">  &#125;,</span><br><span class="line">  beforeRouteLeave (to, <span class="keyword">from</span>, next) &#123;</span><br><span class="line">    <span class="comment">// 导航离开该组件的对应路由时调用</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="05-路由传参"><a href="#05-路由传参" class="headerlink" title="05 - 路由传参"></a>05 - 路由传参</h3><p>分两种方式<code>params</code>和<code>query</code>, <code>params</code>需要在路由配置中设置<code>props: true</code>, 而<code>query</code>类似于get请求.</p>
+<p>取值方式可以直接使用<code>this.$router.currentRoute.query(params)</code>去获取参数,也可以在组件中导入<code>route</code>, 直接<code>route.query(params)</code></p>
+<p>如果一个值多处用的话,放到vuex中比较合适</p>
+<h2 id="vuex"><a href="#vuex" class="headerlink" title="vuex"></a>vuex</h2><p>整体代码写起来比较的简单, 主要在初期的理解.</p>
+<p>你可能觉得这个东西没啥用处, 因为有cookies和storage, 但是这两个是js之外的东西, 你取里面的值有时会很费劲, 可能你要把数据解析出来, 可能还会出现异步的情况. </p>
+<p> 但是用了状态管理, 这些事情会得到改善, 因为他是js之内的东西. 同步异步, 数据格式由你说的算.</p>
+<p>你可以把它理解为一个公共的data库, 存储整个项目中你不容易获得或者监听到的数据.</p>
+<h3 id="01-项目架构"><a href="#01-项目架构" class="headerlink" title="01 - 项目架构"></a>01 - 项目架构</h3><p>这个网上有很多的架构例子, 说的很详细, 这就不多说了,我的方式比较简单,如下图</p>
+<p><img src="http://wx3.sinaimg.cn/mw690/005AePdbly1g25qmyh61gj30570bcq35.jpg" alt></p>
+<p>store.js是实例化, store文件夹中的modules是vuex的实例,包括state, Mutation, Action, getters.js是Getter, 组件中可以放在<code>computed</code>中作为组件的data使用</p>
+<h3 id="02-页面刷新后防止state还原"><a href="#02-页面刷新后防止state还原" class="headerlink" title="02 - 页面刷新后防止state还原"></a>02 - 页面刷新后防止state还原</h3><p>可以在存储或更新state的时候往localStorage中存一份, 页面刷新后去localStorage中加载. 这样能防止state丢失的问题</p>
+<h3 id="03-组件中使用"><a href="#03-组件中使用" class="headerlink" title="03 - 组件中使用"></a>03 - 组件中使用</h3><p>有两种:</p>
+<ol>
+<li><p>组件中导入store.js, 然后直接<code>store.state.app</code>就能拿到对应的值. 但需要<strong>注意</strong>的是, state的内容直接赋值在data中是拿不到的, 因为这个时候state还没有加载完成.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> store <span class="keyword">from</span> <span class="string">"@/store"</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  data() &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      unionId: <span class="string">''</span></span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  created() &#123;</span><br><span class="line">      <span class="keyword">this</span>.unionId = store.state.user.unionId;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>组件中导入<code>mapGetters</code>, 在<code>computed</code>中加载,这样可以直接作为组件的值,直接在页面上使用, 但是更新需要用vuex 的方法,使用之前要再getter.js中设置getter</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// getters.js</span></span><br><span class="line"><span class="keyword">const</span> getters = &#123;</span><br><span class="line">  wxShareTip: <span class="function"><span class="params">state</span> =&gt;</span> state.app.wxShareTip,</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> getters</span><br><span class="line"></span><br><span class="line"><span class="comment">// 组件</span></span><br><span class="line"><span class="keyword">import</span> &#123; mapGetters &#125; <span class="keyword">from</span> <span class="string">"vuex"</span>;</span><br><span class="line"><span class="keyword">import</span> store <span class="keyword">from</span> <span class="string">"@/store"</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  computed: &#123;</span><br><span class="line">    ...mapGetters([<span class="string">"wxShareTip"</span>])</span><br><span class="line">  &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    hideTip() &#123;</span><br><span class="line">      store.dispatch(<span class="string">'SetTipShow'</span>, <span class="literal">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="实现权限管理"><a href="#实现权限管理" class="headerlink" title="实现权限管理"></a>实现权限管理</h2><p>vuex+vue-router结合可以很好的实现前端权限管理的功能</p>
+<p>主要的流程:</p>
+<ol>
+<li>路由进入前, 判断是否有权限</li>
+<li>有权限进入下一个页面, 没有权限跳出到登录,或指定页面</li>
+</ol>
+<h3 id="01-建立-user-的state"><a href="#01-建立-user-的state" class="headerlink" title="01 - 建立 user 的state"></a>01 - 建立 user 的state</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> USER_INFO = <span class="built_in">JSON</span>.parse(localStorage.getItem(<span class="string">'USER_INFO'</span>) || <span class="string">'&#123;&#125;'</span>) || &#123;&#125;; <span class="comment">// 页面刷新时取本地存储</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> user = &#123;</span><br><span class="line">  state: &#123;</span><br><span class="line">    userId: USER_INFO.userId,</span><br><span class="line">    id: USER_INFO.id,</span><br><span class="line">    nickName: USER_INFO.nickName</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  mutations: &#123;</span><br><span class="line">    <span class="comment">// 添加commit</span></span><br><span class="line">    SET_USER_INFO: <span class="function">(<span class="params">state, ui</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> (!ui) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      state.userId = ui.userId;</span><br><span class="line">      state.id = ui.id;</span><br><span class="line">      state.nickName = ui.nickName;</span><br><span class="line">      localStorage.setItem(<span class="string">'USER_INFO'</span>, <span class="built_in">JSON</span>.stringify(ui));</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="comment">// 清除commit</span></span><br><span class="line">    CLEAN_USER_INFO: <span class="function">(<span class="params">state</span>) =&gt;</span> &#123;</span><br><span class="line">      state.userId = <span class="string">''</span>;</span><br><span class="line">      state.id = <span class="string">''</span>;</span><br><span class="line">      state.nickName = <span class="string">''</span>;</span><br><span class="line">      localStorage.setItem(<span class="string">'USER_INFO'</span>, <span class="string">''</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">  actions: &#123;</span><br><span class="line">    setUserInfo (&#123; commit &#125;, userInfo) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">        commit(<span class="string">'SET_USER_INFO'</span>, userInfo);</span><br><span class="line">        resolve()</span><br><span class="line">      &#125;)</span><br><span class="line">    &#125;,</span><br><span class="line">    cleanUserInfo (&#123; commit &#125;) &#123;</span><br><span class="line">      commit(<span class="string">"CLEAN_USER_INFO"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> user;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 别忘了在store.js中声明</span></span><br></pre></td></tr></table></figure>
+<h3 id="02-创建路由监听模块"><a href="#02-创建路由监听模块" class="headerlink" title="02 - 创建路由监听模块"></a>02 - 创建路由监听模块</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> router <span class="keyword">from</span> <span class="string">"@/router"</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; getUserInfo &#125; <span class="keyword">from</span> <span class="string">"@/api"</span>;</span><br><span class="line"><span class="keyword">import</span> store <span class="keyword">from</span> <span class="string">"@/store"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取url参数</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">GetRequest</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> url = location.search;</span><br><span class="line">  <span class="keyword">var</span> theRequest = <span class="keyword">new</span> <span class="built_in">Object</span>();</span><br><span class="line">  <span class="keyword">if</span> (url.indexOf(<span class="string">"?"</span>) != <span class="number">-1</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> str = url.substr(<span class="number">1</span>);</span><br><span class="line">    str = str.split(<span class="string">"&amp;"</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; str.length; i++) &#123;</span><br><span class="line">      theRequest[str[i].split(<span class="string">"="</span>)[<span class="number">0</span>]] = <span class="built_in">unescape</span>(str[i].split(<span class="string">"="</span>)[<span class="number">1</span>]);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> theRequest;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">userPermisson</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  router.beforeEach(<span class="function">(<span class="params">to, <span class="keyword">from</span>, next</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> _param = GetRequest();</span><br><span class="line">    <span class="keyword">if</span> (_param.userId) &#123;</span><br><span class="line">        getUserInfo(&#123; <span class="attr">userId</span>: _param.userId &#125;).then(<span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (res.state == <span class="number">200</span>) &#123;</span><br><span class="line">                store.dispatch(<span class="string">'setUserInfo'</span>, res.data).then(<span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">                    next(<span class="string">'/'</span>);</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> r=confirm(<span class="string">"暂无用户信息,请重新登录!"</span>);</span><br><span class="line">        <span class="keyword">if</span> (r==<span class="literal">true</span>) &#123;</span><br><span class="line">            location.href = <span class="string">'http://foo.com/login'</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            location.href = <span class="string">'http://www.baidu.com'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">  router.afterEach(<span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="03-在router-js中调用"><a href="#03-在router-js中调用" class="headerlink" title="03 - 在router.js中调用"></a>03 - 在router.js中调用</h3><p>其实在main.js中调用也行, 但是感觉在router中调用,相关性比较高</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">"vue"</span>;</span><br><span class="line"><span class="keyword">import</span> Router <span class="keyword">from</span> <span class="string">"vue-router"</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; userPermisson &#125; <span class="keyword">from</span> <span class="string">"./utils/permission"</span>;</span><br><span class="line"></span><br><span class="line">Vue.use(Router);</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">new</span> Router(&#123;</span><br><span class="line">  routes: [</span><br><span class="line">    &#123; <span class="attr">path</span>: <span class="string">'*'</span>, <span class="attr">name</span>: <span class="string">"pageNotFound"</span>, <span class="attr">component</span>: <span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">import</span>(<span class="string">"./components/404.vue"</span>) &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      path: <span class="string">"/"</span>,</span><br><span class="line">      name: <span class="string">"home"</span>,</span><br><span class="line">      component: <span class="function"><span class="params">resolve</span> =&gt;</span> <span class="built_in">require</span>([<span class="string">'./views/Home.vue'</span>], resolve)</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 实际调用</span></span><br><span class="line">userPermisson();</span><br></pre></td></tr></table></figure>
+                <p></p>
+                <div class="clearfix">
+                    <div class="tags pull-left">
+                        
+                            
+
+
+<span class="tag">vuex</span> <span class="tag">vue-router</span> <span class="tag">权限管理</span>
+                                
+                    </div>
+                    <div class="share pull-right">
+                          
+<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+   
+
+                    </div>
+                </div>
+                <div class="license">
+    <p><strong>原文链接：</strong><a href="http://www.sprialmint.com/2019/03/01/vuex+vue-router使用总结及实现权限管理/">http://www.sprialmint.com/2019/03/01/vuex+vue-router使用总结及实现权限管理/</a></p>
+    <p><strong>版权声明：</strong>自由转载-非商用-非衍生-保持署名| <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">Creative Commons BY-NC-ND 4.0</a></p>
+</div>
+                      
+   
+   <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zNTAyNC8xMTU2MA==">
+	<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+	</script>
+<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+
+</section>
+    </article>
+    
+<footer>
+    <div>&copy; 2019 gzw
+  powered_by &nbsp;<a href="http://hexo.io/" target="_blank">Hexo</a> &nbsp;theme by &nbsp;<a href="https://github.com/gzw95322/hexo-theme-stingy" target="_blank">stingy</a></div>
+    <div class="footer-menu">
+  <a href="http://www.miitbeian.gov.cn/" target="_blank">鲁ICP备16001540号</a>
+</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+
+  <link rel="stylesheet" href="/css/gallery.css">
+  <!-- fancybox is 3.x GPLv3 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+
+<script src="/js/script.js"></script>
+
+
+<div id="backtotop" class="animited pullback"><em></em><i></i><span>BACK<br>TO<br>TO<br>TOP</span></div>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?faa764cb53bbf9988c91a8fa2857a4d7";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+   
+    
+</body>
+
+</html>

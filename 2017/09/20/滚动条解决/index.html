@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="keywords" content="undefined">
+  <meta name="description" content="郭志伟的前端小窝">
+  <meta name="author" content="gzw">
+  <meta name="robots" content="undefined">
+  <meta name="msapplication-TileColor" content="#455A64">
+  <meta name="theme-color" content="#455A64">
+  
+    <title>
+      
+        CSS解决HTML页面多个滚动条问题 |
+          
+            sprialmint
+    </title>
+    
+      <link rel="icon" href="/favicon.ico">
+      <!-- <link rel='stylesheet' id='open-sans-css'  href='https://fonts.lug.ustc.edu.cn/css?family=Open+Sans%3A300italic%2C400italic%2C600italic%2C300%2C400%2C600&#038;subset=latin%2Clatin-ext' type='text/css' media='all' /> -->
+      
+      
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="//at.alicdn.com/t/font_596123_b7axjvh0br1z6w29.css">
+</head>
+<body>
+    
+<header id="header" class="animited clearfix">
+  <div class="header-bg"></div>
+    <h1>sprialmint <small>郭志伟的前端小窝</small></h1>
+    <button type="button" class="nav-toggle">
+       <span></span>
+       <span></span>
+       <span></span>
+    </button>
+    <nav>
+      
+      
+      <a href="/">Home</a>
+    
+      
+      <a href="/archives">Archives</a>
+    
+      
+      <a href="/life">Life</a>
+    
+      
+      <a href="/about">About</a>
+    
+    </nav>
+</header>
+    <article id="article">
+            <section>
+    <summary class="title">
+        CSS解决HTML页面多个滚动条问题    </summary>
+    
+            <div class="date">
+                周三 2017-09-20 00:00
+            </div>
+            
+                <p class="sub">
+                    </p><p>滚动在html页面都会存在，当在开发CMS后台页面的时候会遇到多个滚动条堆叠到一块的问题，尤其是有模态框的时候，也会堆叠一个滚动条，会显得页面非常不协调。</p>
+<p><img src="https://ws2.sinaimg.cn/mw690/005AePdbly1fm775he0iwj30kg0dxwf7.jpg" alt="https://ws2.sinaimg.cn/mw690/005AePdbly1fm775he0iwj30kg0dxwf7.jpg"><br><a id="more"></a></p>
+<p>这里通过一些简单的CSS处理，来解决这个问题，使页面正常滚动和模态框加载也只显示一个滚动条。</p>
+<p>页面对主体页面使用<code>display:table</code>、<code>display:table-cell</code>布局，顶部bar和侧边导航使用fixed布局。</p>
+<p><img src="https://ws2.sinaimg.cn/mw690/005AePdbly1fm775gwhpyj30n30ehgm1.jpg" alt="https://ws2.sinaimg.cn/mw690/005AePdbly1fm775gwhpyj30n30ehgm1.jpg"></p>
+<p>最主要的地方是要给<code>html</code>和<code>body</code>这两个标签设置<code>height:100%</code>的样式，还有包裹整个页面标签的<code>div</code>设置<code>height:100%;overflow-y:scroll;</code>。</p>
+<p>以下给出jsfiddle：</p>
+<iframe scrolling="no" width="100%" height="500" src="//jsfiddle.net/sprialmint/jjazgruy/embedded/html,css,result/dark" frameborder="0" allowfullscreen></iframe>
+                <p></p>
+                <div class="clearfix">
+                    <div class="tags pull-left">
+                        
+                            
+
+
+<span class="tag">css</span> <span class="tag">滚动条</span>
+                                
+                    </div>
+                    <div class="share pull-right">
+                          
+<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+   
+
+                    </div>
+                </div>
+                <div class="license">
+    <p><strong>原文链接：</strong><a href="http://www.sprialmint.com/2017/09/20/滚动条解决/">http://www.sprialmint.com/2017/09/20/滚动条解决/</a></p>
+    <p><strong>版权声明：</strong>自由转载-非商用-非衍生-保持署名| <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">Creative Commons BY-NC-ND 4.0</a></p>
+</div>
+                      
+   
+   <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zNTAyNC8xMTU2MA==">
+	<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+	</script>
+<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+
+</section>
+    </article>
+    
+<footer>
+    <div>&copy; 2019 gzw
+  powered_by &nbsp;<a href="http://hexo.io/" target="_blank">Hexo</a> &nbsp;theme by &nbsp;<a href="https://github.com/gzw95322/hexo-theme-stingy" target="_blank">stingy</a></div>
+    <div class="footer-menu">
+  <a href="http://www.miitbeian.gov.cn/" target="_blank">鲁ICP备16001540号</a>
+</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+
+  <link rel="stylesheet" href="/css/gallery.css">
+  <!-- fancybox is 3.x GPLv3 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+
+<script src="/js/script.js"></script>
+
+
+<div id="backtotop" class="animited pullback"><em></em><i></i><span>BACK<br>TO<br>TO<br>TOP</span></div>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?faa764cb53bbf9988c91a8fa2857a4d7";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+   
+    
+</body>
+
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="keywords" content="undefined">
+  <meta name="description" content="郭志伟的前端小窝">
+  <meta name="author" content="gzw">
+  <meta name="robots" content="undefined">
+  <meta name="msapplication-TileColor" content="#455A64">
+  <meta name="theme-color" content="#455A64">
+  
+    <title>
+      
+        APICLOUD-AUI移动端框架dialog组件功能补充 |
+          
+            sprialmint
+    </title>
+    
+      <link rel="icon" href="/favicon.ico">
+      <!-- <link rel='stylesheet' id='open-sans-css'  href='https://fonts.lug.ustc.edu.cn/css?family=Open+Sans%3A300italic%2C400italic%2C600italic%2C300%2C400%2C600&#038;subset=latin%2Clatin-ext' type='text/css' media='all' /> -->
+      
+      
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="//at.alicdn.com/t/font_596123_b7axjvh0br1z6w29.css">
+</head>
+<body>
+    
+<header id="header" class="animited clearfix">
+  <div class="header-bg"></div>
+    <h1>sprialmint <small>郭志伟的前端小窝</small></h1>
+    <button type="button" class="nav-toggle">
+       <span></span>
+       <span></span>
+       <span></span>
+    </button>
+    <nav>
+      
+      
+      <a href="/">Home</a>
+    
+      
+      <a href="/archives">Archives</a>
+    
+      
+      <a href="/life">Life</a>
+    
+      
+      <a href="/about">About</a>
+    
+    </nav>
+</header>
+    <article id="article">
+            <section>
+    <summary class="title">
+        APICLOUD-AUI移动端框架dialog组件功能补充    </summary>
+    
+            <div class="date">
+                周一 2017-10-09 00:00
+            </div>
+            
+                <p class="sub">
+                    </p><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><blockquote>
+<p>AUI作为APICLOUD官方指定的移动端框架，方便了平时的针对APICLOUD的开发，但是有些功能还是没有的，比如说modal，这里我通过对AUI框架中dialog组件的简单扩展，实现了这一功能。<br><a id="more"></a></p>
+</blockquote>
+<p>dialog组件在AUI中的设定主要是提供一些alert,prompt之类的简单的提示弹窗，因此在代码上也是直接设定为一下固定死的模版。而modal的设定需要能够加入自定义内容，为此在需要模版的页面中加入了<code>&lt;script type=&quot;text/template&quot;&gt;&lt;/script&gt;</code>来添加html代码。</p>
+<p>在<code>aui-dialog.js</code>文件中加入方法<code>modal</code>和相应的参数，来实现了具体的功能。</p>
+<p>以下具体的代码（只描述了主要的代码，源代码底部用源文件链接）：</p>
+<h2 id="问题纠正–2017-10-09-18-30："><a href="#问题纠正–2017-10-09-18-30：" class="headerlink" title="问题纠正–2017-10-09 18:30："></a><strong>问题纠正–2017-10-09 18:30</strong>：</h2><p><strong>当aui-dialog.js运行在apicloud应用中的frame中时会出现弹窗（modal）闪退无法打开的问题，这时需要将aui-dialog.js文件中对弹窗按钮的监听事件<code>onclick</code>改为<code>ontouchstart</code>即可解决。</strong></p>
+<h3 id="aui-dialog-js调整"><a href="#aui-dialog-js调整" class="headerlink" title="aui-dialog.js调整"></a>aui-dialog.js调整</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// ......</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Line 13</span></span><br><span class="line">auiDialog.prototype = &#123;</span><br><span class="line">        params: &#123;</span><br><span class="line">            title:<span class="string">''</span>,</span><br><span class="line">            msg:<span class="string">''</span>,</span><br><span class="line">            buttons: [<span class="string">'取消'</span>,<span class="string">'确定'</span>],</span><br><span class="line">            input:<span class="literal">false</span>,</span><br><span class="line">            custom: <span class="literal">false</span>,  <span class="comment">//是否自定义内容</span></span><br><span class="line">            templateId: <span class="string">'template'</span>,    <span class="comment">// 模版ID</span></span><br><span class="line">            times: <span class="literal">false</span>        <span class="comment">//是否显示关闭按钮</span></span><br><span class="line">        &#125;,</span><br><span class="line"></span><br><span class="line">        create: <span class="function"><span class="keyword">function</span>(<span class="params">params,callback</span>) </span>&#123;</span><br><span class="line">                <span class="keyword">var</span> self = <span class="keyword">this</span>;</span><br><span class="line">                <span class="keyword">var</span> dialogHtml = <span class="string">''</span>;</span><br><span class="line">                <span class="keyword">var</span> buttonsHtml = <span class="string">''</span>;</span><br><span class="line">                <span class="keyword">var</span> times_tpl = params.times ? <span class="string">'&lt;button type="button" class="aui-dialog-btn close" tapmode button-index="-1"&gt;&amp;times;&lt;/button&gt;'</span> : <span class="string">''</span>;  <span class="comment">//设定关闭按钮</span></span><br><span class="line">                <span class="keyword">var</span> headerHtml = params.title ? <span class="string">'&lt;div class="aui-dialog-header"&gt;'</span> + params.title + times_tpl +<span class="string">'&lt;/div&gt;'</span> : <span class="string">'&lt;div class="aui-dialog-header"&gt;'</span> + self.params.title + <span class="string">'&lt;/div&gt;'</span>;</span><br><span class="line">                <span class="keyword">if</span> (params.custom) &#123;</span><br><span class="line">                    <span class="keyword">var</span> msgHtml = <span class="string">'&lt;div class="aui-dialog-body"&gt;'</span>+<span class="built_in">document</span>.getElementById(self.params.templateId).text+<span class="string">'&lt;/div&gt;'</span>;    <span class="comment">// 提取模版html</span></span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line"></span><br><span class="line">                    <span class="comment">// .......</span></span><br><span class="line">                    </span><br><span class="line">                <span class="keyword">var</span> _modal = params.custom ? <span class="string">' aui-dialog-modal'</span> : <span class="string">''</span>;      <span class="comment">// 加入CSS</span></span><br><span class="line">                dialogHtml = <span class="string">'&lt;div class="aui-dialog'</span>+_modal+<span class="string">'"&gt;'</span>+headerHtml+msgHtml+footerHtml+<span class="string">'&lt;/div&gt;'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ......</span></span><br><span class="line"><span class="comment">// Line 132</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//modal方法实现</span></span><br><span class="line">        modal: <span class="function"><span class="keyword">function</span>(<span class="params">params,callback</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">var</span> self = <span class="keyword">this</span>;</span><br><span class="line">            params.input = <span class="literal">false</span>;</span><br><span class="line">            params.custom = <span class="literal">true</span>;</span><br><span class="line">            params.times = <span class="literal">true</span>;</span><br><span class="line">            <span class="keyword">return</span> self.create(params,callback);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ......</span></span><br></pre></td></tr></table></figure>
+<p>相对应的css文件页面调整</p>
+<h3 id="aui-css"><a href="#aui-css" class="headerlink" title="aui.css"></a>aui.css</h3><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">// Line 1957</span><br><span class="line"></span><br><span class="line"><span class="comment">/*dialog*/</span></span><br><span class="line"><span class="selector-class">.aui-dialog</span> &#123;</span><br><span class="line">	<span class="attribute">width</span>: <span class="number">13.5rem</span>;</span><br><span class="line">	<span class="attribute">text-align</span>: center;</span><br><span class="line">	<span class="attribute">position</span>: fixed;</span><br><span class="line">	<span class="attribute">z-index</span>: <span class="number">999</span>;</span><br><span class="line">    <span class="attribute">left</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">right</span>: <span class="number">0</span>;</span><br><span class="line">	<span class="attribute">margin</span>: <span class="number">0</span> auto;</span><br><span class="line">	<span class="attribute">top</span>: <span class="number">45%</span>;</span><br><span class="line">	<span class="attribute">border-radius</span>: <span class="number">0.3rem</span>;</span><br><span class="line">	<span class="attribute">opacity</span>: <span class="number">0</span>;</span><br><span class="line">	<span class="attribute">background-color</span>: <span class="number">#ffffff</span>;</span><br><span class="line">	<span class="attribute">-webkit-transform</span>: <span class="built_in">translate3d</span>(0, 0, 0) <span class="built_in">scale</span>(1.2);</span><br><span class="line">          	<span class="attribute">transform</span>: <span class="built_in">translate3d</span>(0, 0, 0) <span class="built_in">scale</span>(1.2);</span><br><span class="line"> 	<span class="attribute">-webkit-transition-property</span>: -webkit-transform, opacity;</span><br><span class="line">          	<span class="attribute">transition-property</span>: transform, opacity;</span><br><span class="line">    <span class="comment">/*display: none;*/</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.aui-dialog-modal</span> &#123;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">15rem</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.aui-dialog-modal</span> <span class="selector-class">.aui-dialog-header</span> &#123;</span><br><span class="line">    <span class="attribute">position</span>: relative;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.aui-dialog-modal</span> <span class="selector-class">.close</span> &#123;</span><br><span class="line">    <span class="attribute">padding</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">color</span>: <span class="number">#000</span>;</span><br><span class="line">    <span class="attribute">opacity</span>: .<span class="number">3</span>;</span><br><span class="line">    <span class="attribute">font-size</span>: <span class="number">1.1rem</span>;</span><br><span class="line">    <span class="attribute">font-weight</span>: <span class="number">600</span>;</span><br><span class="line">    <span class="attribute">height</span>: auto;</span><br><span class="line">    <span class="attribute">border</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">background-color</span>: <span class="number">#fff</span>;</span><br><span class="line">    <span class="attribute">line-height</span>: <span class="number">1</span>;</span><br><span class="line">    <span class="attribute">width</span>: auto;</span><br><span class="line">    <span class="attribute">position</span>: absolute;</span><br><span class="line">    <span class="attribute">top</span>: .<span class="number">5rem</span>;</span><br><span class="line">    <span class="attribute">right</span>: .<span class="number">6rem</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在具体页面中引用和加载模版</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- ...... --&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"aui-content-padded"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"aui-btn aui-btn-block aui-btn-warning"</span> <span class="attr">tapmode</span> <span class="attr">onclick</span>=<span class="string">"openDialog()"</span>&gt;</span>MODAL<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">script</span> <span class="attr">id</span>=<span class="string">"template"</span> <span class="attr">type</span>=<span class="string">"text/template"</span>&gt;</span><span class="undefined">  </span></span><br><span class="line"><span class="xml">    <span class="comment">&lt;!-- 模板部分 --&gt;</span>  </span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">strong</span>&gt;</span>adasdasfdjasdhkasdklasjdkl<span class="tag">&lt;/<span class="name">strong</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="comment">&lt;!-- 模板结束 --&gt;</span>    </span></span><br><span class="line"><span class="undefined">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined">  </span></span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> dialog = <span class="keyword">new</span> auiDialog();</span></span><br><span class="line"><span class="javascript">    <span class="function"><span class="keyword">function</span> <span class="title">openDialog</span>(<span class="params"></span>)</span>&#123;</span></span><br><span class="line"><span class="undefined">        dialog.modal(&#123;</span></span><br><span class="line"><span class="javascript">            title:<span class="string">"aaaa"</span>,</span></span><br><span class="line"><span class="javascript">            text:<span class="string">''</span>,</span></span><br><span class="line"><span class="javascript">            type:<span class="string">'number'</span>,</span></span><br><span class="line"><span class="javascript">            buttons:[<span class="string">'取消'</span>,<span class="string">'确定'</span>],</span></span><br><span class="line"><span class="javascript">            custom: <span class="literal">true</span>,</span></span><br><span class="line"><span class="javascript">            templateId: <span class="string">'template'</span>,</span></span><br><span class="line"><span class="javascript">        &#125;,<span class="function"><span class="keyword">function</span>(<span class="params">ret</span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">            <span class="built_in">console</span>.log(ret);</span></span><br><span class="line"><span class="undefined">        &#125;)</span></span><br><span class="line"><span class="undefined">    &#125;</span></span><br><span class="line"><span class="undefined">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- ...... --&gt;</span></span><br></pre></td></tr></table></figure>
+<p>###源代码下载</p>
+<p><a href="https://pan.baidu.com/s/1jHLRUrs" target="_blank" rel="noopener">bai度网盘</a> 密码: dtde</p>
+                <p></p>
+                <div class="clearfix">
+                    <div class="tags pull-left">
+                        
+                            
+
+
+<span class="tag">APICLOUD</span> <span class="tag">AUI</span> <span class="tag">modal</span>
+                                
+                    </div>
+                    <div class="share pull-right">
+                          
+<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+   
+
+                    </div>
+                </div>
+                <div class="license">
+    <p><strong>原文链接：</strong><a href="http://www.sprialmint.com/2017/10/09/APICLOUD-AUI移动端框架dialog组件功能补充/">http://www.sprialmint.com/2017/10/09/APICLOUD-AUI移动端框架dialog组件功能补充/</a></p>
+    <p><strong>版权声明：</strong>自由转载-非商用-非衍生-保持署名| <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">Creative Commons BY-NC-ND 4.0</a></p>
+</div>
+                      
+   
+   <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zNTAyNC8xMTU2MA==">
+	<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+	</script>
+<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+
+</section>
+    </article>
+    
+<footer>
+    <div>&copy; 2019 gzw
+  powered_by &nbsp;<a href="http://hexo.io/" target="_blank">Hexo</a> &nbsp;theme by &nbsp;<a href="https://github.com/gzw95322/hexo-theme-stingy" target="_blank">stingy</a></div>
+    <div class="footer-menu">
+  <a href="http://www.miitbeian.gov.cn/" target="_blank">鲁ICP备16001540号</a>
+</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+
+  <link rel="stylesheet" href="/css/gallery.css">
+  <!-- fancybox is 3.x GPLv3 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+
+<script src="/js/script.js"></script>
+
+
+<div id="backtotop" class="animited pullback"><em></em><i></i><span>BACK<br>TO<br>TO<br>TOP</span></div>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?faa764cb53bbf9988c91a8fa2857a4d7";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+   
+    
+</body>
+
+</html>

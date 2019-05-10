@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="keywords" content="undefined">
+  <meta name="description" content="郭志伟的前端小窝">
+  <meta name="author" content="gzw">
+  <meta name="robots" content="undefined">
+  <meta name="msapplication-TileColor" content="#455A64">
+  <meta name="theme-color" content="#455A64">
+  
+    <title>
+      
+        微信小程序开发里的一些坑 |
+          
+            sprialmint
+    </title>
+    
+      <link rel="icon" href="/favicon.ico">
+      <!-- <link rel='stylesheet' id='open-sans-css'  href='https://fonts.lug.ustc.edu.cn/css?family=Open+Sans%3A300italic%2C400italic%2C600italic%2C300%2C400%2C600&#038;subset=latin%2Clatin-ext' type='text/css' media='all' /> -->
+      
+      
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="//at.alicdn.com/t/font_596123_b7axjvh0br1z6w29.css">
+</head>
+<body>
+    
+<header id="header" class="animited clearfix">
+  <div class="header-bg"></div>
+    <h1>sprialmint <small>郭志伟的前端小窝</small></h1>
+    <button type="button" class="nav-toggle">
+       <span></span>
+       <span></span>
+       <span></span>
+    </button>
+    <nav>
+      
+      
+      <a href="/">Home</a>
+    
+      
+      <a href="/archives">Archives</a>
+    
+      
+      <a href="/life">Life</a>
+    
+      
+      <a href="/about">About</a>
+    
+    </nav>
+</header>
+    <article id="article">
+            <section>
+    <summary class="title">
+        微信小程序开发里的一些坑    </summary>
+    
+            <div class="date">
+                周二 2018-04-24 00:00
+            </div>
+            
+                <p class="sub">
+                    <blockquote>
+<p>最近在研究小程序开发,踩了不少坑,整的自己整个人都不太好了🤣</p>
+</blockquote>
+<a id="more"></a>
+</p><h3 id="keng-1-不要相信IDE模拟器中的显示效果"><a href="#keng-1-不要相信IDE模拟器中的显示效果" class="headerlink" title="#keng 1 - 不要相信IDE模拟器中的显示效果"></a>#keng 1 - 不要相信IDE模拟器中的显示效果</h3><p>不要相信IDE模拟器中的显示效果,效果仅供参考.<strong>不要以开发web应用的方式去开发小程序,因为两个不是一种东西.</strong>官方的IDE中的模拟器就是个html网页,很多效果最后在真机测试的时候差距很大,甚至会报错,例如使用<code>wx.downloadFile</code>方法下载文件的临时路径跟实际路径是不同的.</p>
+<h3 id="keng-2-CSS中的一些样式在WXSS中不一定有效"><a href="#keng-2-CSS中的一些样式在WXSS中不一定有效" class="headerlink" title="#keng 2 - CSS中的一些样式在WXSS中不一定有效"></a>#keng 2 - CSS中的一些样式在WXSS中不一定有效</h3><p>对于这块,我遇到几个,但是也挺苦恼的,只能是绕道解决:</p>
+<ul>
+<li>在<code>page</code>标签上使用<code>overflow:hidden</code>样式不能实现页面的禁止滚动效果.这个方式在IDE模拟器中是好好的,但是你会发现即便是WXSS这么写了,到了真机中<code>page</code>还是会滚动,还是闪屏….</li>
+<li><code>canvas</code>标签设置<code>z-index</code>是无效的,这点官方文档有写了,<code>canvas</code>一些原生标签不能设置这些属性的,会覆盖到原有标签上.</li>
+<li></li>
+</ul>
+<h3 id="keng-3-CANVAS中的drawImage方法不能加载线上地址的图片"><a href="#keng-3-CANVAS中的drawImage方法不能加载线上地址的图片" class="headerlink" title="#keng 3  - CANVAS中的drawImage方法不能加载线上地址的图片"></a>#keng 3  - CANVAS中的drawImage方法不能加载线上地址的图片</h3><p>drawImage方法方法只能加载本地或临时路径的图片,这块我有总结,可以看看另一片文章 <a href>微信小程序canvas绘制网络图片问题解决总结</a>.</p>
+<h3 id="keng-4-修改data-中某个数组参数的某一项"><a href="#keng-4-修改data-中某个数组参数的某一项" class="headerlink" title="#keng 4 - 修改data 中某个数组参数的某一项"></a>#keng 4 - 修改data 中某个数组参数的某一项</h3><p>这块官方也提供了文档,但是也挺奇怪的,上代码比较直观:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Page(&#123;</span><br><span class="line">    data: &#123;</span><br><span class="line">        arr: [<span class="string">'A'</span>,<span class="string">'B'</span>,<span class="string">'C'</span>,<span class="string">'D'</span>,<span class="string">'E'</span>]  <span class="comment">// 新建一个数组</span></span><br><span class="line">    &#125;,</span><br><span class="line">  onReady: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      </span><br><span class="line">    <span class="keyword">this</span>.setData(&#123;<span class="string">"arr[3]"</span>: <span class="string">"b"</span>&#125;); <span class="comment">// 错误, 会报错,不能更改值</span></span><br><span class="line">      </span><br><span class="line">    <span class="keyword">let</span> arr_item = <span class="string">'arr[3]'</span>; <span class="comment">// 提前声明需要修改数据的位置</span></span><br><span class="line">    <span class="keyword">this</span>.setData(&#123;<span class="attr">arr_item</span>: <span class="string">"a"</span>&#125;); <span class="comment">// 赋值</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<h3 id="keng-5-swiper动态加载swiper-item的实现"><a href="#keng-5-swiper动态加载swiper-item的实现" class="headerlink" title="#keng 5 - swiper动态加载swiper-item的实现"></a>#keng 5 - swiper动态加载swiper-item的实现</h3><p>这个效果的实现其实官方文档已经给了例子,但是自己比较作, 非得整个<code>background-image:url()</code>通过加载背景的方式套用<code>wx:for</code>渲染实现,结果就是不停的报错.</p>
+<p>其实方法很简单,按照官方文档,<code>image</code>标签的<code>src</code>作为变量,JS中<code>setData</code>更新相应的数组即可.</p>
+<p>现在摆在这里以示羞辱🤫.</p>
+<h3 id="keng-6-中文自定义字体加载问题"><a href="#keng-6-中文自定义字体加载问题" class="headerlink" title="# keng 6 - 中文自定义字体加载问题"></a># keng 6 - 中文自定义字体加载问题</h3><p>这个坑我是不知道该怎么解决了,本以为能够按照css3的方式加载,但发现根本行不通,官方也给了些解决方案但是都不理想:</p>
+<ul>
+<li>字体文件放到小程序合法的服务器上</li>
+<li>字体转换为base64</li>
+</ul>
+<p>中文字体文件很大,平均都在1M以上,加载起来很慢, 而且目前版本的兼容性还有问题,在IOS和IDE模拟器上显示的还是正常的,但是放到android上就不行了.</p>
+<p>中文字体过大导致另一个问题的出现: 将字体文件转为base64放到wxss中加载,这样虽然可以解决字体加载问题(iconfont测试可行),但是最终导致wxss文件的大小超过了小程序的限制,最后就没法上传了.</p>
+<p>所以中文自定义字体能不用就不用, 用的少就转成图片吧,效果显示上不是很理想.</p>
+<blockquote>
+<p>目前有个可效(可能有效)的方法,小程序的文档上提供了分包功能,可以将一部分功能分开打包.通过这个功能先把字体文件预先加载完成,需要使用字体的页面分包加载. </p>
+</blockquote>
+<h3 id="keng-7-canvas中使用自定义字体"><a href="#keng-7-canvas中使用自定义字体" class="headerlink" title="# keng 7 - canvas中使用自定义字体"></a># keng 7 - canvas中使用自定义字体</h3><p>canvas中如果要使用自定义字体, 需要先让字体文件加载完成,再绘制生成canvas才能有效.</p>
+                <p></p>
+                <div class="clearfix">
+                    <div class="tags pull-left">
+                        
+                            
+
+
+<span class="tag">微信小程序</span> <span class="tag">跳坑</span>
+                                
+                    </div>
+                    <div class="share pull-right">
+                          
+<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+   
+
+                    </div>
+                </div>
+                <div class="license">
+    <p><strong>原文链接：</strong><a href="http://www.sprialmint.com/2018/04/24/微信小程序开发里踩过的一些坑/">http://www.sprialmint.com/2018/04/24/微信小程序开发里踩过的一些坑/</a></p>
+    <p><strong>版权声明：</strong>自由转载-非商用-非衍生-保持署名| <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">Creative Commons BY-NC-ND 4.0</a></p>
+</div>
+                      
+   
+   <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zNTAyNC8xMTU2MA==">
+	<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+	</script>
+<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+
+</section>
+    </article>
+    
+<footer>
+    <div>&copy; 2019 gzw
+  powered_by &nbsp;<a href="http://hexo.io/" target="_blank">Hexo</a> &nbsp;theme by &nbsp;<a href="https://github.com/gzw95322/hexo-theme-stingy" target="_blank">stingy</a></div>
+    <div class="footer-menu">
+  <a href="http://www.miitbeian.gov.cn/" target="_blank">鲁ICP备16001540号</a>
+</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+
+  <link rel="stylesheet" href="/css/gallery.css">
+  <!-- fancybox is 3.x GPLv3 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+
+<script src="/js/script.js"></script>
+
+
+<div id="backtotop" class="animited pullback"><em></em><i></i><span>BACK<br>TO<br>TO<br>TOP</span></div>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?faa764cb53bbf9988c91a8fa2857a4d7";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+   
+    
+</body>
+
+</html>

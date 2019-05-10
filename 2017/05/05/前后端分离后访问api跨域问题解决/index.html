@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="keywords" content="undefined">
+  <meta name="description" content="郭志伟的前端小窝">
+  <meta name="author" content="gzw">
+  <meta name="robots" content="undefined">
+  <meta name="msapplication-TileColor" content="#455A64">
+  <meta name="theme-color" content="#455A64">
+  
+    <title>
+      
+        前后端分离后访问api跨域问题解决 |
+          
+            sprialmint
+    </title>
+    
+      <link rel="icon" href="/favicon.ico">
+      <!-- <link rel='stylesheet' id='open-sans-css'  href='https://fonts.lug.ustc.edu.cn/css?family=Open+Sans%3A300italic%2C400italic%2C600italic%2C300%2C400%2C600&#038;subset=latin%2Clatin-ext' type='text/css' media='all' /> -->
+      
+      
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="//at.alicdn.com/t/font_596123_b7axjvh0br1z6w29.css">
+</head>
+<body>
+    
+<header id="header" class="animited clearfix">
+  <div class="header-bg"></div>
+    <h1>sprialmint <small>郭志伟的前端小窝</small></h1>
+    <button type="button" class="nav-toggle">
+       <span></span>
+       <span></span>
+       <span></span>
+    </button>
+    <nav>
+      
+      
+      <a href="/">Home</a>
+    
+      
+      <a href="/archives">Archives</a>
+    
+      
+      <a href="/life">Life</a>
+    
+      
+      <a href="/about">About</a>
+    
+    </nav>
+</header>
+    <article id="article">
+            <section>
+    <summary class="title">
+        前后端分离后访问api跨域问题解决    </summary>
+    
+            <div class="date">
+                周五 2017-05-05 00:00
+            </div>
+            
+                <p class="sub">
+                    </p><p>前后端分离后，前端如果访问后台的接口，如果网站前后端是同域名的可能不会出现跨域的问题，但是前端和后端不在同一个域名下势必会出现访问跨域的问题。一下是一下对于跨域－问题解决的办法。<br><a id="more"></a></p>
+<ul>
+<li><h2 id="后端设置"><a href="#后端设置" class="headerlink" title="后端设置"></a>后端设置</h2><p>通过在后台的设置允许跨域，即可解决网站的跨域问题。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Access-Control-Allow-Origin: *</span><br></pre></td></tr></table></figure>
+<p>​</p>
+</li>
+<li><h2 id="使用jsonp解决跨域问题"><a href="#使用jsonp解决跨域问题" class="headerlink" title="使用jsonp解决跨域问题"></a>使用jsonp解决跨域问题</h2><p>通过script标签实现跨域请求，然后在服务端输出JSON数据并执行回调函数，从而解决了跨域的数据请求。</p>
+<p>这里ng也提供了相应的解决方法</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$http.jsonp(<span class="string">"https://api.github.com?callback=JSON_CALLBACK"</span>).success(<span class="function"><span class="keyword">function</span> (<span class="params">data</span>) </span>&#123;</span><br><span class="line">    　　<span class="comment">// 数据</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>当请求被发送时，AngularJS会在DOM中生成一个如下所示的<code>&lt;script&gt;</code>标签：</p>
+<p><code>&lt;script src=&quot;https://api.github.com?callback=angular.callbacks._0&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;</code></p>
+<p>注意，JSON_CALLBACK被替换成了一个特地为此请求生成的自定义函数。当支持JSONP的服务器返回数据时，数据会被包装在由AngularJS生成的具名函数angular.callbacks._0中在这个例子中，GitHub服务器会返回包含在回调函数中的JSON数据，响应看起来如下所示：　</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">angular.callbacks._0(&#123;</span><br><span class="line">    <span class="string">'meta'</span>: &#123;</span><br><span class="line">        <span class="string">'X-RateLimit - Limit'</span>: <span class="string">'60'</span>,</span><br><span class="line">        <span class="string">'status'</span>: <span class="number">200</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">'data'</span>: &#123;</span><br><span class="line">        <span class="string">'current_user_url'</span>: <span class="string">'https://api.github.com/user'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>当AngularJS调用指定的回调函数时会对$http的promise对象进行resolve。</p>
+<p>由于http请求是通过script发送的，所以只能通过JSONP发送GET请求。</p>
+<p>​</p>
+</li>
+<li><h2 id="使用第三方库xdomian-js实现"><a href="#使用第三方库xdomian-js实现" class="headerlink" title="使用第三方库xdomian.js实现"></a>使用第三方库xdomian.js实现</h2><p>以上的解决方式都可以解决访问的跨域问题，但是用在ie9直接就死翘翘了，因为ie9上有一个<strong>“是否允许跨域数据”</strong>的选项，但是这个选项一般都是默认禁止（很坑）是不允许访问跨域来源的数据的，这里只能是通过xdomian.js来解决。其解决的原理是在后端放置一个html页面并加上xdomian.js作为主域名，同时在前端也加上一个xdomian.js附属域名，前端生成一个iframe访问后端的页面，前端将http请求的数据传给iframe，iframe中的页面将数据发送给后台，这样使原本跨域的访问变成了同域访问。</p>
+<p>​</p>
+<p>盗张图示意：</p>
+<p><img src="https://camo.githubusercontent.com/6e04534c59482bae4a6035a3621e2aff88d041d0/68747470733a2f2f646f63732e676f6f676c652e636f6d2f64726177696e67732f642f31505478484471645739694e716167447774614f306767585a6b4a7037494c6952445657414d48496e4647512f7075623f773d34393826683d323335" alt></p>
+</li>
+</ul>
+<blockquote>
+<p>The dark red before hook is returning a response object, which will trigger the after hooks, then trigger the appropriate events, so it<em> <strong>appears</strong> </em>as if response came from the server.*</p>
+</blockquote>
+<h3 id="在ng中的实现"><a href="#在ng中的实现" class="headerlink" title="在ng中的实现"></a>在ng中的实现</h3><h4 id="服务器端－－-proxy-html"><a href="#服务器端－－-proxy-html" class="headerlink" title="服务器端－－ proxy.html"></a>服务器端－－ proxy.html</h4><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">xdomain配置文件——解决IE9以下不能跨域名访问的问题</span></span><br><span class="line"><span class="comment">需要放到接口的域名下</span></span><br><span class="line"><span class="comment">接口端放置该文件并把master的参数改为客户端域名，也可以是多个域名</span></span><br><span class="line"><span class="comment">客户端加入该script标签，并把master属性改为slave,并修改参数为接口端</span></span><br><span class="line"><span class="comment">具体文档参照：https://github.com/jpillora/xdomain</span></span><br><span class="line"><span class="comment"> --&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE HTML&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"//cdn.bootcss.com/xdomain/0.7.5/xdomain.min.js"</span> <span class="attr">master</span>=<span class="string">"*"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="服务器端－－-proxy-html-1"><a href="#服务器端－－-proxy-html-1" class="headerlink" title="服务器端－－ proxy.html"></a>服务器端－－ proxy.html</h4><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"//cdn.bootcss.com/xdomain/0.7.5/xdomain.min.js"</span> <span class="attr">slave</span>=<span class="string">"https://&lt;!--后台地址--&gt;/proxy.html"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>github地址：<a href="https://github.com/jpillora/xdomain" target="_blank" rel="noopener">https://github.com/jpillora/xdomain</a></p>
+                <p></p>
+                <div class="clearfix">
+                    <div class="tags pull-left">
+                        
+                            
+
+
+<span class="tag">angularjs</span>
+                                
+                    </div>
+                    <div class="share pull-right">
+                          
+<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+   
+
+                    </div>
+                </div>
+                <div class="license">
+    <p><strong>原文链接：</strong><a href="http://www.sprialmint.com/2017/05/05/前后端分离后访问api跨域问题解决/">http://www.sprialmint.com/2017/05/05/前后端分离后访问api跨域问题解决/</a></p>
+    <p><strong>版权声明：</strong>自由转载-非商用-非衍生-保持署名| <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">Creative Commons BY-NC-ND 4.0</a></p>
+</div>
+                      
+   
+   <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zNTAyNC8xMTU2MA==">
+	<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+	</script>
+<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+
+</section>
+    </article>
+    
+<footer>
+    <div>&copy; 2019 gzw
+  powered_by &nbsp;<a href="http://hexo.io/" target="_blank">Hexo</a> &nbsp;theme by &nbsp;<a href="https://github.com/gzw95322/hexo-theme-stingy" target="_blank">stingy</a></div>
+    <div class="footer-menu">
+  <a href="http://www.miitbeian.gov.cn/" target="_blank">鲁ICP备16001540号</a>
+</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+
+  <link rel="stylesheet" href="/css/gallery.css">
+  <!-- fancybox is 3.x GPLv3 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+
+<script src="/js/script.js"></script>
+
+
+<div id="backtotop" class="animited pullback"><em></em><i></i><span>BACK<br>TO<br>TO<br>TOP</span></div>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?faa764cb53bbf9988c91a8fa2857a4d7";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+   
+    
+</body>
+
+</html>

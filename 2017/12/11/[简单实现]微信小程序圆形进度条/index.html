@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="keywords" content="undefined">
+  <meta name="description" content="郭志伟的前端小窝">
+  <meta name="author" content="gzw">
+  <meta name="robots" content="undefined">
+  <meta name="msapplication-TileColor" content="#455A64">
+  <meta name="theme-color" content="#455A64">
+  
+    <title>
+      
+        【简单实现】微信小程序圆形进度条 |
+          
+            sprialmint
+    </title>
+    
+      <link rel="icon" href="/favicon.ico">
+      <!-- <link rel='stylesheet' id='open-sans-css'  href='https://fonts.lug.ustc.edu.cn/css?family=Open+Sans%3A300italic%2C400italic%2C600italic%2C300%2C400%2C600&#038;subset=latin%2Clatin-ext' type='text/css' media='all' /> -->
+      
+      
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="//at.alicdn.com/t/font_596123_b7axjvh0br1z6w29.css">
+</head>
+<body>
+    
+<header id="header" class="animited clearfix">
+  <div class="header-bg"></div>
+    <h1>sprialmint <small>郭志伟的前端小窝</small></h1>
+    <button type="button" class="nav-toggle">
+       <span></span>
+       <span></span>
+       <span></span>
+    </button>
+    <nav>
+      
+      
+      <a href="/">Home</a>
+    
+      
+      <a href="/archives">Archives</a>
+    
+      
+      <a href="/life">Life</a>
+    
+      
+      <a href="/about">About</a>
+    
+    </nav>
+</header>
+    <article id="article">
+            <section>
+    <summary class="title">
+        【简单实现】微信小程序圆形进度条    </summary>
+    
+            <div class="date">
+                周一 2017-12-11 00:00
+            </div>
+            
+                <p class="sub">
+                    </p><p>微信小程序本身提供了html5中原生的直线进度条,但是没有提供圆形进度条,这里我使用canvas简单实现了一个圆形进度条组件.</p>
+<a id="more"></a>
+<p>进度条的实现还是基于canvas的操作,但是相比于html5中canvas的api,微信小程序的api略有缩减,功能并不是那么的多,比如说<code>measureText</code>、<code>window.requestAnimationFrame</code>等等.</p>
+<p>丢张效果图:</p>
+<p><img src="https://ws2.sinaimg.cn/mw690/005AePdbly1fm775e1njng30am0bswfb.gif" alt="Animation.gif"></p>
+<p>网上提供的版本基本都是两个canvas叠加实现的,但是没有必要,瞅了瞅 <a href="http://blog.csdn.net/qq_21058391/article/details/76691047" target="_blank" rel="noopener">html5 canvas实现圆形进度条</a>的文章里面有个好点的例子,就直接那过来用了……..你发现,肯定是没法用的😏,因为api都变的了,所以要对代码做一下调整,把对应的参数换成微信小程序的参数.</p>
+<p>但是微信小程序没有 <code>requestAnimationFrame</code>  这样的动画执行参数所以只能用<code>setInterval</code> 来实现了,最后还要注意的是要想执行动画,还要使用<code>draw</code> 方法才行的.</p>
+<p>以下为相应的代码:</p>
+<h4 id="js"><a href="#js" class="headerlink" title="js:"></a>js:</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 组件progress.js</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">drawMain</span>(<span class="params">drawing_elem, percent, forecolor, bgcolor, line, ctx</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> context = wx.createCanvasContext(drawing_elem);<span class="comment">//创建并返回绘图上下文context对象。</span></span><br><span class="line">  <span class="keyword">var</span> center_x = ctx.w / <span class="number">2</span>;</span><br><span class="line">  <span class="keyword">var</span> center_y = ctx.h / <span class="number">2</span>;</span><br><span class="line">  <span class="keyword">var</span> rad = <span class="built_in">Math</span>.PI * <span class="number">2</span> / <span class="number">100</span>;</span><br><span class="line">  <span class="keyword">var</span> speed = <span class="number">0</span>;</span><br><span class="line">  <span class="comment">// 绘制背景圆圈</span></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">backgroundCircle</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    context.save();</span><br><span class="line">    context.beginPath();</span><br><span class="line">    context.setLineWidth(line); <span class="comment">//设置线宽</span></span><br><span class="line">    <span class="keyword">var</span> radius = center_x - line;</span><br><span class="line">    context.setLineCap(<span class="string">"round"</span>);</span><br><span class="line">    context.setStrokeStyle(bgcolor);</span><br><span class="line">    context.arc(center_x, center_y, radius, <span class="number">0</span>, <span class="built_in">Math</span>.PI * <span class="number">2</span>, <span class="literal">false</span>);</span><br><span class="line">    context.stroke();</span><br><span class="line">    context.closePath();</span><br><span class="line">    context.restore();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//绘制运动圆环</span></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">foregroundCircle</span>(<span class="params">n</span>) </span>&#123;</span><br><span class="line">    context.save();</span><br><span class="line">    context.setStrokeStyle(forecolor);</span><br><span class="line">    context.setLineWidth(line);</span><br><span class="line">    context.setLineCap(<span class="string">"round"</span>);</span><br><span class="line">    <span class="keyword">var</span> radius = center_x - line;</span><br><span class="line">    context.beginPath();</span><br><span class="line">    context.arc(center_x, center_y, radius, -<span class="built_in">Math</span>.PI / <span class="number">2</span>, -<span class="built_in">Math</span>.PI / <span class="number">2</span> + n * rad, <span class="literal">false</span>); <span class="comment">//用于绘制圆弧context.arc(x坐标，y坐标，半径，起始角度，终止角度，顺时针/逆时针)</span></span><br><span class="line">    context.stroke();</span><br><span class="line">    context.closePath();</span><br><span class="line">    context.restore();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//绘制文字</span></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">text</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">    context.save(); <span class="comment">//save和restore可以保证样式属性只运用于该段canvas元素</span></span><br><span class="line">    context.setFillStyle(forecolor);</span><br><span class="line">    <span class="keyword">var</span> font_size = obj.size;</span><br><span class="line">    context.setFontSize(font_size)</span><br><span class="line">    <span class="keyword">var</span> text_width = <span class="number">0</span>;</span><br><span class="line">    context.setTextAlign(<span class="string">'center'</span>);</span><br><span class="line">    context.fillText(obj.value, center_x - text_width / <span class="number">2</span> + obj.offsetX, center_y + font_size / <span class="number">2</span> + obj.offsetY);</span><br><span class="line">    context.restore();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">var</span> animation_interval = <span class="number">20</span>, n = percent, varName;</span><br><span class="line">  <span class="keyword">var</span> step = <span class="number">0</span>;</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">animation</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    context.clearRect(<span class="number">0</span>, <span class="number">0</span>, drawing_elem.width, drawing_elem.height);</span><br><span class="line">    backgroundCircle();</span><br><span class="line">    text(&#123;</span><br><span class="line">      size: <span class="number">48</span>,</span><br><span class="line">      offsetX: <span class="number">-5</span>,</span><br><span class="line">      offsetY: <span class="number">-15</span>,</span><br><span class="line">      value: step.toFixed(<span class="number">0</span>)</span><br><span class="line">    &#125;);</span><br><span class="line">    text(&#123;</span><br><span class="line">      size: <span class="number">20</span>,</span><br><span class="line">      offsetX: <span class="number">35</span>,</span><br><span class="line">      offsetY: <span class="number">-5</span>,</span><br><span class="line">      value: <span class="string">"分"</span></span><br><span class="line">    &#125;);</span><br><span class="line">    text(&#123;</span><br><span class="line">      size: <span class="number">12</span>,</span><br><span class="line">      offsetX: <span class="number">0</span>,</span><br><span class="line">      offsetY: <span class="number">30</span>,</span><br><span class="line">      value: <span class="string">"综合评分"</span></span><br><span class="line">    &#125;);</span><br><span class="line">    foregroundCircle(step);</span><br><span class="line">    <span class="keyword">if</span> (step &gt;= percent) clearInterval(varName);</span><br><span class="line">    step += <span class="number">1</span>;</span><br><span class="line">    context.draw();</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line">  varName = setInterval(animation, animation_interval);</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">module</span>.exports = drawMain;</span><br></pre></td></tr></table></figure>
+<h4 id="wxml"><a href="#wxml" class="headerlink" title="wxml"></a>wxml</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">canvas</span> <span class="attr">class</span>=<span class="string">"cir"</span> <span class="attr">canvas-id</span>=<span class="string">"canvasArc"</span> <span class="attr">style</span>=<span class="string">'width:&#123;&#123;ctx.w&#125;&#125;px;height:&#123;&#123;ctx.h&#125;&#125;px;'</span>&gt;</span> </span><br><span class="line">  <span class="tag">&lt;/<span class="name">canvas</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="调用"><a href="#调用" class="headerlink" title="调用"></a>调用</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 导入</span></span><br><span class="line"><span class="keyword">var</span> drawMain = <span class="built_in">require</span>(<span class="string">'../../utils/progress.js'</span>);</span><br><span class="line">Page(&#123;</span><br><span class="line">  data: &#123;</span><br><span class="line">    <span class="comment">// 设置 进度条的高宽,值</span></span><br><span class="line">    ctx: &#123;</span><br><span class="line">      w: <span class="number">160</span>,</span><br><span class="line">      h: <span class="number">160</span>,</span><br><span class="line">      value: <span class="number">70</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  onLoad: <span class="function"><span class="keyword">function</span> (<span class="params">options</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 页面初始化 options为页面跳转所带来的参数 </span></span><br><span class="line">  &#125;,</span><br><span class="line">  onReady: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 开始画图   canvas-id   value   前景色  背景色   进度条宽度   高宽数据  </span></span><br><span class="line">    <span class="keyword">new</span> drawMain(<span class="string">"canvasArc"</span>, <span class="keyword">this</span>.data.ctx.value, <span class="string">"#32A0F0"</span>, <span class="string">"#e7e7e7"</span>, <span class="number">10</span>, <span class="keyword">this</span>.data.ctx);</span><br><span class="line">    </span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p> <a href="https://pan.baidu.com/s/1eSOvzNG" target="_blank" rel="noopener">源码下载: 2wc2</a></p>
+                <p></p>
+                <div class="clearfix">
+                    <div class="tags pull-left">
+                        
+                            
+
+
+<span class="tag">canvas</span> <span class="tag">微信小程序</span> <span class="tag">圆形进度条</span>
+                                
+                    </div>
+                    <div class="share pull-right">
+                          
+<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+   
+
+                    </div>
+                </div>
+                <div class="license">
+    <p><strong>原文链接：</strong><a href="http://www.sprialmint.com/2017/12/11/[简单实现]微信小程序圆形进度条/">http://www.sprialmint.com/2017/12/11/[简单实现]微信小程序圆形进度条/</a></p>
+    <p><strong>版权声明：</strong>自由转载-非商用-非衍生-保持署名| <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">Creative Commons BY-NC-ND 4.0</a></p>
+</div>
+                      
+   
+   <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zNTAyNC8xMTU2MA==">
+	<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+	</script>
+<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+
+</section>
+    </article>
+    
+<footer>
+    <div>&copy; 2019 gzw
+  powered_by &nbsp;<a href="http://hexo.io/" target="_blank">Hexo</a> &nbsp;theme by &nbsp;<a href="https://github.com/gzw95322/hexo-theme-stingy" target="_blank">stingy</a></div>
+    <div class="footer-menu">
+  <a href="http://www.miitbeian.gov.cn/" target="_blank">鲁ICP备16001540号</a>
+</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+
+  <link rel="stylesheet" href="/css/gallery.css">
+  <!-- fancybox is 3.x GPLv3 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+
+<script src="/js/script.js"></script>
+
+
+<div id="backtotop" class="animited pullback"><em></em><i></i><span>BACK<br>TO<br>TO<br>TOP</span></div>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?faa764cb53bbf9988c91a8fa2857a4d7";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+   
+    
+</body>
+
+</html>

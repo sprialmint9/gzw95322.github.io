@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="keywords" content="undefined">
+  <meta name="description" content="郭志伟的前端小窝">
+  <meta name="author" content="gzw">
+  <meta name="robots" content="undefined">
+  <meta name="msapplication-TileColor" content="#455A64">
+  <meta name="theme-color" content="#455A64">
+  
+    <title>
+      
+        Angualrjs表单数据序列化 |
+          
+            sprialmint
+    </title>
+    
+      <link rel="icon" href="/favicon.ico">
+      <!-- <link rel='stylesheet' id='open-sans-css'  href='https://fonts.lug.ustc.edu.cn/css?family=Open+Sans%3A300italic%2C400italic%2C600italic%2C300%2C400%2C600&#038;subset=latin%2Clatin-ext' type='text/css' media='all' /> -->
+      
+      
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="//at.alicdn.com/t/font_596123_b7axjvh0br1z6w29.css">
+</head>
+<body>
+    
+<header id="header" class="animited clearfix">
+  <div class="header-bg"></div>
+    <h1>sprialmint <small>郭志伟的前端小窝</small></h1>
+    <button type="button" class="nav-toggle">
+       <span></span>
+       <span></span>
+       <span></span>
+    </button>
+    <nav>
+      
+      
+      <a href="/">Home</a>
+    
+      
+      <a href="/archives">Archives</a>
+    
+      
+      <a href="/life">Life</a>
+    
+      
+      <a href="/about">About</a>
+    
+    </nav>
+</header>
+    <article id="article">
+            <section>
+    <summary class="title">
+        Angualrjs表单数据序列化    </summary>
+    
+            <div class="date">
+                周五 2016-09-30 00:00
+            </div>
+            
+                <p class="sub">
+                    </p><p>#Angualrjs表单数据序列化</p>
+<p>ng提交表单的形式与普通的提交不同，它不是通过<code>&lt;input value=&quot;&quot; name=&quot;a&quot;&gt;</code>和<code>&lt;input type=&quot;submit&quot; value=&quot;提交&quot;&gt;</code>来提交表单数据的，而是通过在<code>input</code>标签中植入<code>ng-model</code>属性来实现的数据的获取和加载，在<code>button</code>标签中添加<code>ng-click</code>或<code>ng-submit</code>触发后台的方法来实现提交数据的，也就是完全的ajax提交。<br><a id="more"></a><br>但是<code>ng-model</code>获取到的数据就只是个数据，ng不会读取<code>input</code>的<code>name</code>属性，传输的数据是一个还很好处理，但是在输入数据较多的情况下，我们会在controller中设置一个<code>$scope.vo</code>的变量（名字随意）然后在html模板里写成这样：<code>&lt;input ng-model=&quot;vo.name&quot;&gt;</code>，这样写把所有的数据都放到了一个json中，但表单提交的方式是<code>url?a=ss&amp;b=sss</code>需要序列化的，而ng的<code>$http</code>传输数据不像jqery的<code>$.ajax</code>那样默认把表单序列化传给后台，遇到这样的一种办法是后台处理，另一种是前台处理，这里我说明一下ng前台处理的方法。</p>
+<p>###调用jquery中的$.param方法</p>
+<p>这种方法是需要加载jq库的，只要写一个方法通过<code>$.param</code>处理返回，并在ng的$http方法中设置一下<code>tranform</code>属性即可。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> transform = <span class="function"><span class="keyword">function</span>(<span class="params">data</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> $.param(data);</span><br><span class="line">&#125;;</span><br><span class="line">$http.post(</span><br><span class="line">        <span class="string">"www.baidu.com"</span>,</span><br><span class="line">        data,</span><br><span class="line">        &#123;</span><br><span class="line">            headers: &#123; <span class="string">'Content-Type'</span>: <span class="string">'application/x-www-form-urlencoded; charset=UTF-8'</span> &#125;,</span><br><span class="line">            transformRequest: transform</span><br><span class="line">        &#125;);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>注意</strong>：在ng的<code>$http</code>方法中的一定要设置<code>headers: { &#39;Content-Type&#39;: &#39;application/x-www-form-urlencoded; charset=UTF-8&#39; }</code>,防止乱码。</p>
+</blockquote>
+<p>这种调用jq的方法很方便的，但是本人略微强迫症，ng是一个完整的前台框架，也有jqLite，加一个jq感觉没有必要，不推荐！</p>
+<p>###通过js原生</p>
+<p>这中方法就是写一个js原生方法，将json数据进行拼接，通过<code>encodeURIComponent</code>方法重新编码，转成序列化。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$http(&#123;</span><br><span class="line">    method: <span class="string">'POST'</span>,</span><br><span class="line">    url: path,</span><br><span class="line">    headers: &#123; <span class="string">'Content-Type'</span>: <span class="string">'application/x-www-form-urlencoded'</span> &#125;,</span><br><span class="line">    transformRequest: <span class="function"><span class="keyword">function</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> str = [];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">var</span> p <span class="keyword">in</span> obj)</span><br><span class="line">            str.push(<span class="built_in">encodeURIComponent</span>(p) + <span class="string">"="</span> + <span class="built_in">encodeURIComponent</span>(obj[p]));</span><br><span class="line">        <span class="keyword">return</span> str.join(<span class="string">"&amp;"</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">    data: postdata</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>这种方法与jq差不多，但是不需要调用jq库，而且简单几行代码解决。</p>
+<p>这种方法可以在低版本的ng中使用，但是到了ng较高版本中（&gt;1.4.0）就不需要了。</p>
+<p>###通过ng自带的方法</p>
+<p>ng都自带还费那么大劲干啥？！</p>
+<p>注意：ng自带是从1.4.0版本以后才有的，之前的版本是没有的。</p>
+<p>在较新的版本中官方提供了<code>$httpParamSerializerJQLike</code>的方法，看字面意思就能猜到作用（字段序列化像jq，嘿嘿），用法也很简单，没有什么副作用</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">.controller(<span class="function"><span class="keyword">function</span>(<span class="params">$http, $httpParamSerializerJQLike</span>) </span>&#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">  $http(&#123;</span><br><span class="line">    url: myUrl,</span><br><span class="line">    method: <span class="string">'POST'</span>,</span><br><span class="line">    data: $httpParamSerializerJQLike(myData),</span><br><span class="line">    headers: &#123;</span><br><span class="line">      <span class="string">'Content-Type'</span>: <span class="string">'application/x-www-form-urlencoded'</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p><strong>注意：</strong>这个方法的使用需要在controller或service中声明。</p>
+                <p></p>
+                <div class="clearfix">
+                    <div class="tags pull-left">
+                        
+                            
+
+
+<span class="tag">angularjs</span> <span class="tag">序列化</span>
+                                
+                    </div>
+                    <div class="share pull-right">
+                          
+<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+   
+
+                    </div>
+                </div>
+                <div class="license">
+    <p><strong>原文链接：</strong><a href="http://www.sprialmint.com/2016/09/30/Angualrjs处理表单数据并提交/">http://www.sprialmint.com/2016/09/30/Angualrjs处理表单数据并提交/</a></p>
+    <p><strong>版权声明：</strong>自由转载-非商用-非衍生-保持署名| <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">Creative Commons BY-NC-ND 4.0</a></p>
+</div>
+                      
+   
+   <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zNTAyNC8xMTU2MA==">
+	<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+	</script>
+<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+
+</section>
+    </article>
+    
+<footer>
+    <div>&copy; 2019 gzw
+  powered_by &nbsp;<a href="http://hexo.io/" target="_blank">Hexo</a> &nbsp;theme by &nbsp;<a href="https://github.com/gzw95322/hexo-theme-stingy" target="_blank">stingy</a></div>
+    <div class="footer-menu">
+  <a href="http://www.miitbeian.gov.cn/" target="_blank">鲁ICP备16001540号</a>
+</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+
+  <link rel="stylesheet" href="/css/gallery.css">
+  <!-- fancybox is 3.x GPLv3 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+
+<script src="/js/script.js"></script>
+
+
+<div id="backtotop" class="animited pullback"><em></em><i></i><span>BACK<br>TO<br>TO<br>TOP</span></div>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?faa764cb53bbf9988c91a8fa2857a4d7";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+   
+    
+</body>
+
+</html>

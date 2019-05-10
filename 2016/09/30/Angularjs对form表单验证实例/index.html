@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="keywords" content="undefined">
+  <meta name="description" content="郭志伟的前端小窝">
+  <meta name="author" content="gzw">
+  <meta name="robots" content="undefined">
+  <meta name="msapplication-TileColor" content="#455A64">
+  <meta name="theme-color" content="#455A64">
+  
+    <title>
+      
+        Angularjs对form表单验证实例 |
+          
+            sprialmint
+    </title>
+    
+      <link rel="icon" href="/favicon.ico">
+      <!-- <link rel='stylesheet' id='open-sans-css'  href='https://fonts.lug.ustc.edu.cn/css?family=Open+Sans%3A300italic%2C400italic%2C600italic%2C300%2C400%2C600&#038;subset=latin%2Clatin-ext' type='text/css' media='all' /> -->
+      
+      
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="//at.alicdn.com/t/font_596123_b7axjvh0br1z6w29.css">
+</head>
+<body>
+    
+<header id="header" class="animited clearfix">
+  <div class="header-bg"></div>
+    <h1>sprialmint <small>郭志伟的前端小窝</small></h1>
+    <button type="button" class="nav-toggle">
+       <span></span>
+       <span></span>
+       <span></span>
+    </button>
+    <nav>
+      
+      
+      <a href="/">Home</a>
+    
+      
+      <a href="/archives">Archives</a>
+    
+      
+      <a href="/life">Life</a>
+    
+      
+      <a href="/about">About</a>
+    
+    </nav>
+</header>
+    <article id="article">
+            <section>
+    <summary class="title">
+        Angularjs对form表单验证实例    </summary>
+    
+            <div class="date">
+                周五 2016-09-30 00:00
+            </div>
+            
+                <p class="sub">
+                    </p><p>#Angularjs对form表单验证实例</p>
+<p>ng自带表单验证组件，可以实时检验输入内容的是否符合规则。</p>
+<p><img src="https://ws2.sinaimg.cn/mw690/005AePdbly1fm775cxuykj30gh07xglm.jpg" alt="demo"><br><a id="more"></a><br>ng的验证方式是通过在输入框上添加属性实现的。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;input type=<span class="string">"text"</span> required&gt;</span><br></pre></td></tr></table></figure></p>
+<p>输入框（input、select、textarea）常用的几个属性</p>
+<table>
+<thead>
+<tr>
+<th>类目</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>novalidate</td>
+<td>form标签添加，去除h5自带的验证</td>
+</tr>
+<tr>
+<td>ng-required</td>
+<td>是否必填 注意和required区别</td>
+</tr>
+<tr>
+<td>ng-minlength 、ng-maxlength</td>
+<td>最小、最大长度</td>
+</tr>
+<tr>
+<td>ng-pattern</td>
+<td>匹配模式</td>
+</tr>
+<tr>
+<td>email</td>
+<td>邮箱验证</td>
+</tr>
+<tr>
+<td>url</td>
+<td>URL验证</td>
+</tr>
+<tr>
+<td>number</td>
+<td>数字验证</td>
+</tr>
+</tbody>
+</table>
+<p>同时对每一个输入框都需要添加相应的提示文字或者样式，ng自带的不能实现验证的重用，需要每一个输入框设置，但是提示文字是可以通过<code>angular-message.js</code>来集合到一块来实现的。</p>
+<p>ng提供了以下几种提示种类：</p>
+<table>
+<thead>
+<tr>
+<th>类目</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$invalid</td>
+<td>当任一验证(required、ng-minlength等)标识表单的任一字段为无效时AngularJS设置这种状态</td>
+</tr>
+<tr>
+<td>$valid</td>
+<td>与$invalid相反，设置所有表单验证目前评估为正确状态</td>
+</tr>
+<tr>
+<td>$pristine</td>
+<td>AngularJS中所有表单从该状态开始。这允许你找出用户是否开始输入并修改任何表单元素。可能的用法：表单原始状态下禁用reset按钮。</td>
+</tr>
+<tr>
+<td>$dirty</td>
+<td>与$pristine相反。即用户做了一些更改（他可以恢复,但$dirty标识已经设置）。</td>
+</tr>
+<tr>
+<td>$error</td>
+<td>包含控件或表单验证失败的引用。在接下来的章节我们将进一步讨论这部分。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>注意：</strong>表单需要有那么作为识别项，form标签需要带有name属性，输入框也需要name属性。</p>
+<p>代码示例：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;form name=<span class="string">"myform"</span>&gt;</span><br><span class="line">    &lt;div ng-show=<span class="string">"myform.wt_title.$dirty &amp;&amp; myform.wt_title.$invalid"</span>&gt;</span><br><span class="line">        &lt;div ng-show=<span class="string">"myform.title.$error.required"</span>&gt;请输入标题&lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">        &lt;div ng-show="myform.title.$error.maxlength"&gt;最多30个字&lt;/</span>div&gt;</span><br><span class="line">        &lt;div ng-show=<span class="string">"myform.title.$error.minlength"</span>&gt;最少<span class="number">5</span>个字&lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">        &lt;div ng-show="myform.title.$error.pattern"&gt;手机号格式不正确&lt;/</span>div&gt;</span><br><span class="line">    &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">    &lt;input type="text" name="title" placeholder="请输入" ng-model="vo.title" ng-maxlength="30" ng-minlength="5" ng-pattern="/</span>^<span class="number">1</span>[<span class="number">3</span>|<span class="number">4</span>|<span class="number">5</span>|<span class="number">6</span>|<span class="number">7</span>|<span class="number">8</span>|<span class="number">9</span>][<span class="number">0</span><span class="number">-9</span>]&#123;<span class="number">1</span>&#125;[<span class="number">0</span><span class="number">-9</span>]&#123;<span class="number">8</span>&#125;$/<span class="string">" required&gt;</span></span><br><span class="line"><span class="string">    &lt;button type="</span>button<span class="string">" ng-click="</span>subtl()<span class="string">" ng-disabled="</span>myform.$invalid<span class="string">"&gt;提交&lt;/button&gt;</span></span><br><span class="line"><span class="string">&lt;/form&gt;</span></span><br></pre></td></tr></table></figure>
+<p><strong>##：</strong>对于checkbox和radio的验证，ng没有相应的处理办法，这个只能依靠controller来实现了。</p>
+<p>具体的详细的api请访问angularjs的官网：<a href="https://code.angularjs.org/1.5.5/docs/api/ng/directive" target="_blank" rel="noopener">https://code.angularjs.org/1.5.5/docs/api/ng/directive</a></p>
+                <p></p>
+                <div class="clearfix">
+                    <div class="tags pull-left">
+                        
+                            
+
+
+<span class="tag">angularjs</span>
+                                
+                    </div>
+                    <div class="share pull-right">
+                          
+<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+   
+
+                    </div>
+                </div>
+                <div class="license">
+    <p><strong>原文链接：</strong><a href="http://www.sprialmint.com/2016/09/30/Angularjs对form表单验证实例/">http://www.sprialmint.com/2016/09/30/Angularjs对form表单验证实例/</a></p>
+    <p><strong>版权声明：</strong>自由转载-非商用-非衍生-保持署名| <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">Creative Commons BY-NC-ND 4.0</a></p>
+</div>
+                      
+   
+   <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zNTAyNC8xMTU2MA==">
+	<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+	</script>
+<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+
+</section>
+    </article>
+    
+<footer>
+    <div>&copy; 2019 gzw
+  powered_by &nbsp;<a href="http://hexo.io/" target="_blank">Hexo</a> &nbsp;theme by &nbsp;<a href="https://github.com/gzw95322/hexo-theme-stingy" target="_blank">stingy</a></div>
+    <div class="footer-menu">
+  <a href="http://www.miitbeian.gov.cn/" target="_blank">鲁ICP备16001540号</a>
+</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+
+  <link rel="stylesheet" href="/css/gallery.css">
+  <!-- fancybox is 3.x GPLv3 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+
+<script src="/js/script.js"></script>
+
+
+<div id="backtotop" class="animited pullback"><em></em><i></i><span>BACK<br>TO<br>TO<br>TOP</span></div>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?faa764cb53bbf9988c91a8fa2857a4d7";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+   
+    
+</body>
+
+</html>

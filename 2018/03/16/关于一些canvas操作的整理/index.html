@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="keywords" content="undefined">
+  <meta name="description" content="郭志伟的前端小窝">
+  <meta name="author" content="gzw">
+  <meta name="robots" content="undefined">
+  <meta name="msapplication-TileColor" content="#455A64">
+  <meta name="theme-color" content="#455A64">
+  
+    <title>
+      
+        关于一些canvas操作的整理 |
+          
+            sprialmint
+    </title>
+    
+      <link rel="icon" href="/favicon.ico">
+      <!-- <link rel='stylesheet' id='open-sans-css'  href='https://fonts.lug.ustc.edu.cn/css?family=Open+Sans%3A300italic%2C400italic%2C600italic%2C300%2C400%2C600&#038;subset=latin%2Clatin-ext' type='text/css' media='all' /> -->
+      
+      
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="//at.alicdn.com/t/font_596123_b7axjvh0br1z6w29.css">
+</head>
+<body>
+    
+<header id="header" class="animited clearfix">
+  <div class="header-bg"></div>
+    <h1>sprialmint <small>郭志伟的前端小窝</small></h1>
+    <button type="button" class="nav-toggle">
+       <span></span>
+       <span></span>
+       <span></span>
+    </button>
+    <nav>
+      
+      
+      <a href="/">Home</a>
+    
+      
+      <a href="/archives">Archives</a>
+    
+      
+      <a href="/life">Life</a>
+    
+      
+      <a href="/about">About</a>
+    
+    </nav>
+</header>
+    <article id="article">
+            <section>
+    <summary class="title">
+        关于一些canvas操作的整理    </summary>
+    
+            <div class="date">
+                周五 2018-03-16 00:00
+            </div>
+            
+                <p class="sub">
+                    <blockquote>
+<p>canvas之前自己好好学习过,但是实际在项目中的没有好好的运用过,这里整理下之前项目中所使用到的一下效果和方法.</p>
+</blockquote>
+<a id="more"></a>
+</p><h2 id="1-多边形绘制"><a href="#1-多边形绘制" class="headerlink" title="#1 - 多边形绘制"></a>#1 - 多边形绘制</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">var</span> drawPolygon = <span class="function"><span class="keyword">function</span>(<span class="params">ctx, conf</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> x = conf &amp;&amp; conf.x || <span class="number">0</span>; <span class="comment">//中心点x坐标</span></span><br><span class="line">  <span class="keyword">var</span> y = conf &amp;&amp; conf.y || <span class="number">0</span>; <span class="comment">//中心点y坐标</span></span><br><span class="line">  <span class="keyword">var</span> num = conf &amp;&amp; conf.num || <span class="number">3</span>; <span class="comment">//图形边的个数</span></span><br><span class="line">  <span class="keyword">var</span> r = conf &amp;&amp; conf.r || <span class="number">100</span>; <span class="comment">//图形的半径</span></span><br><span class="line">  <span class="keyword">var</span> width = conf &amp;&amp; conf.width || <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">var</span> strokeStyle = conf &amp;&amp; conf.strokeStyle;</span><br><span class="line">  <span class="keyword">var</span> fillStyle = conf &amp;&amp; conf.fillStyle;</span><br><span class="line">  <span class="keyword">var</span> rotate = conf &amp;&amp; conf.rotate || <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">var</span> rate = conf &amp;&amp; conf.rate || <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> lineArr = [];</span><br><span class="line">  ctx.save();</span><br><span class="line">  <span class="comment">//开始路径</span></span><br><span class="line">  ctx.beginPath();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> startX = x + r * <span class="built_in">Math</span>.cos(<span class="number">2</span> * <span class="built_in">Math</span>.PI * <span class="number">0</span> / num);</span><br><span class="line">  <span class="keyword">var</span> startY = y + r * <span class="built_in">Math</span>.sin(<span class="number">2</span> * <span class="built_in">Math</span>.PI * <span class="number">0</span> / num);</span><br><span class="line">  lineArr.push(&#123;</span><br><span class="line">    x: startX,</span><br><span class="line">    y: startY</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="comment">/* console.log('beginPath:' + startX + '-' + startY) */</span></span><br><span class="line">  </span><br><span class="line">  ctx.moveTo(startX, startY);</span><br><span class="line">  <span class="comment">//ctx.rotate(rotate);</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">1</span>; i &lt;= num; i++) &#123;</span><br><span class="line">    <span class="keyword">var</span> newX = x + r * <span class="built_in">Math</span>.cos(<span class="number">2</span> * <span class="built_in">Math</span>.PI * i / num);</span><br><span class="line">    <span class="keyword">var</span> newY = y + r * <span class="built_in">Math</span>.sin(<span class="number">2</span> * <span class="built_in">Math</span>.PI * i / num);</span><br><span class="line">    <span class="comment">/* console.log('lineTo' + i + ':' + newX + '-' + newY) */</span></span><br><span class="line">    ;</span><br><span class="line">    lineArr.push(&#123;</span><br><span class="line">      x: newX,</span><br><span class="line">      y: newY</span><br><span class="line">    &#125;);</span><br><span class="line">    ctx.lineTo(newX, newY);</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ctx.globalCompositeOperation = <span class="string">"lighter"</span>;</span><br><span class="line">  ctx.shadowBlur = <span class="number">40</span>;</span><br><span class="line">  ctx.shadowColor = <span class="string">"rgba(0,0,0,0.18)"</span>;</span><br><span class="line">  ctx.closePath();</span><br><span class="line">  <span class="comment">//路径闭合</span></span><br><span class="line">  <span class="keyword">if</span> (strokeStyle) &#123;</span><br><span class="line">    ctx.strokeStyle = strokeStyle;</span><br><span class="line">    ctx.lineWidth = width;</span><br><span class="line">    ctx.lineJoin = <span class="string">'round'</span>;</span><br><span class="line">    ctx.stroke();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (fillStyle) &#123;</span><br><span class="line">    ctx.fillStyle = fillStyle;</span><br><span class="line">    ctx.fill();</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="2-圆形绘制"><a href="#2-圆形绘制" class="headerlink" title="#2 圆形绘制"></a>#2 圆形绘制</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">setArc</span>(<span class="params">ctx, conf2</span>) </span>&#123;</span><br><span class="line">  ctx.beginPath();</span><br><span class="line">  ctx.arc(conf2.x, conf2.y, conf2.r, <span class="number">0</span>, <span class="number">2</span> * <span class="built_in">Math</span>.PI);</span><br><span class="line">  ctx.stroke();</span><br><span class="line">  ctx.fillStyle = <span class="string">"#888"</span>;</span><br><span class="line">  ctx.fill();</span><br><span class="line">  ctx.globalCompositeOperation = <span class="string">"source-over"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="3-两个图形的重叠区域高亮"><a href="#3-两个图形的重叠区域高亮" class="headerlink" title="#3 两个图形的重叠区域高亮"></a>#3 两个图形的重叠区域高亮</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">ctx.globalCompositeOperation = <span class="string">"lighter"</span>;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>globalCompositeOperation</code>属性的详细文档请参考 <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation" target="_blank" rel="noopener">MDN</a>.</p>
+</blockquote>
+<h2 id="4-阴影"><a href="#4-阴影" class="headerlink" title="#4 阴影"></a>#4 阴影</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ctx.shadowBlur = <span class="number">40</span>;</span><br><span class="line">ctx.shadowColor = <span class="string">"rgba(0,0,0,0.18)"</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="5-动画自动执行"><a href="#5-动画自动执行" class="headerlink" title="#5 动画自动执行"></a>#5 动画自动执行</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.requestAnimFrame = (<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span>  <span class="built_in">window</span>.requestAnimationFrame       || </span><br><span class="line">        <span class="built_in">window</span>.webkitRequestAnimationFrame || </span><br><span class="line">        <span class="built_in">window</span>.mozRequestAnimationFrame    || </span><br><span class="line">        <span class="built_in">window</span>.oRequestAnimationFrame      || </span><br><span class="line">        <span class="built_in">window</span>.msRequestAnimationFrame     || </span><br><span class="line">        <span class="function"><span class="keyword">function</span>(<span class="params"><span class="regexp">/* function */</span> callback, <span class="regexp">/* DOMElement */</span> element</span>)</span>&#123;</span><br><span class="line">        <span class="built_in">window</span>.setTimeout(callback, <span class="number">1000</span> / <span class="number">60</span>);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;)();</span><br><span class="line">调用</span><br><span class="line">(<span class="function"><span class="keyword">function</span> <span class="title">drawFrame</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  requestAnimationFrame(drawFrame);</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>网上扒来的,兼容性好.</p>
+</blockquote>
+<h2 id="6-图像中心旋转及速度控制"><a href="#6-图像中心旋转及速度控制" class="headerlink" title="#6 图像中心旋转及速度控制"></a>#6 图像中心旋转及速度控制</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ctx.translate(x, y);</span><br><span class="line">ctx.rotate(rotate * rate);</span><br><span class="line">ctx.translate(-x, -y);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>x</code>和<code>y</code>为中心点坐标,<code>rotate</code>为旋转的角度,<code>rate</code>为旋转的速率,旋转效果放在<code>AnimationFrame</code>中即可,但是<code>AnimationFrame</code>是以浏览器最大的帧率执行绘制的,所以<code>AnimationFrame</code>不能直接控制速率,这个用到了<code>rate</code>参数,逆时针旋转rotate设成负数即可.</p>
+</blockquote>
+<h2 id="7-文字绘制"><a href="#7-文字绘制" class="headerlink" title="#7 文字绘制"></a>#7 文字绘制</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">obj = &#123;</span></span><br><span class="line"><span class="comment">	forecolor: '#fff', //颜色</span></span><br><span class="line"><span class="comment">	size: 16, //大小</span></span><br><span class="line"><span class="comment">	value: '文字',</span></span><br><span class="line"><span class="comment">	offsetX: 18, //偏移量X</span></span><br><span class="line"><span class="comment">	offsetY: 19  // 偏移量Y</span></span><br><span class="line"><span class="comment">&#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">text</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">    context.save(); <span class="comment">//save和restore可以保证样式属性只运用于该段canvas元素</span></span><br><span class="line">    context.fillStyle = obj.forecolor;</span><br><span class="line">     <span class="keyword">var</span> font_size = obj.size;</span><br><span class="line">     context.font = <span class="string">"400 "</span> + font_size + <span class="string">"px Roboto"</span>;</span><br><span class="line">     <span class="keyword">var</span> text_width = context.measureText(obj.value).width;</span><br><span class="line">    <span class="comment">// center_x,center_y,为中心点坐标,位置根据请况定</span></span><br><span class="line">     context.fillText(obj.value, center_x - text_width / <span class="number">2</span> + obj.offsetX, center_y + font_size / <span class="number">2</span> + obj.offsetY);</span><br><span class="line">    context.restore();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="8-图片绘制"><a href="#8-图片绘制" class="headerlink" title="#8 图片绘制"></a>#8 图片绘制</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">//引入图片</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">obj = &#123;</span></span><br><span class="line"><span class="comment">    offsetX; 12, // 位置</span></span><br><span class="line"><span class="comment">    width; 12, // 位置</span></span><br><span class="line"><span class="comment">    offsetY; 12, // 大小</span></span><br><span class="line"><span class="comment">    width; 12, // 大小</span></span><br><span class="line"><span class="comment">    url; 12, // 路径</span></span><br><span class="line"><span class="comment">    isCirlce: true  图片圆角</span></span><br><span class="line"><span class="comment">&#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">picture</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">    context.save();</span><br><span class="line">    <span class="keyword">if</span> (obj.isCirlce)&#123;</span><br><span class="line">      context.arc(obj.offsetX + obj.width / <span class="number">2</span>, obj.offsetY + obj.width / <span class="number">2</span>, obj.width - <span class="number">20</span>, <span class="number">0</span>, <span class="number">2</span> * <span class="built_in">Math</span>.PI); <span class="comment">//画出圆</span></span><br><span class="line">      context.clip();</span><br><span class="line">    &#125;</span><br><span class="line">    context.drawImage(obj.url, obj.offsetX, obj.offsetY, obj.width, obj.height); <span class="comment">//this即是imgObj,保持图片的原始大小：470*480</span></span><br><span class="line">    context.restore();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>arc()</code>方法是为了实现图片圆角</p>
+</blockquote>
+<h2 id="9-画线"><a href="#9-画线" class="headerlink" title="#9 画线"></a>#9 画线</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">obj = &#123;</span></span><br><span class="line"><span class="comment">    start: 0, //起点</span></span><br><span class="line"><span class="comment">    val: 0, //终点</span></span><br><span class="line"><span class="comment">    end: 0, //偏移</span></span><br><span class="line"><span class="comment">&#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">line</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">    context.save();</span><br><span class="line">    context.beginPath();</span><br><span class="line">    context.setStrokeStyle(obj.color);</span><br><span class="line">    context.setLineWidth(<span class="number">0.5</span>);</span><br><span class="line">    context.moveTo(obj.start, obj.val);</span><br><span class="line">    context.lineTo(obj.end, obj.val);</span><br><span class="line">    context.stroke();</span><br><span class="line">    context.restore();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+                <p></p>
+                <div class="clearfix">
+                    <div class="tags pull-left">
+                        
+                            
+
+
+<span class="tag">canvas</span>
+                                
+                    </div>
+                    <div class="share pull-right">
+                          
+<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+   
+
+                    </div>
+                </div>
+                <div class="license">
+    <p><strong>原文链接：</strong><a href="http://www.sprialmint.com/2018/03/16/关于一些canvas操作的整理/">http://www.sprialmint.com/2018/03/16/关于一些canvas操作的整理/</a></p>
+    <p><strong>版权声明：</strong>自由转载-非商用-非衍生-保持署名| <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">Creative Commons BY-NC-ND 4.0</a></p>
+</div>
+                      
+   
+   <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zNTAyNC8xMTU2MA==">
+	<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+	</script>
+<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+
+</section>
+    </article>
+    
+<footer>
+    <div>&copy; 2019 gzw
+  powered_by &nbsp;<a href="http://hexo.io/" target="_blank">Hexo</a> &nbsp;theme by &nbsp;<a href="https://github.com/gzw95322/hexo-theme-stingy" target="_blank">stingy</a></div>
+    <div class="footer-menu">
+  <a href="http://www.miitbeian.gov.cn/" target="_blank">鲁ICP备16001540号</a>
+</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+
+  <link rel="stylesheet" href="/css/gallery.css">
+  <!-- fancybox is 3.x GPLv3 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+
+<script src="/js/script.js"></script>
+
+
+<div id="backtotop" class="animited pullback"><em></em><i></i><span>BACK<br>TO<br>TO<br>TOP</span></div>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?faa764cb53bbf9988c91a8fa2857a4d7";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+   
+    
+</body>
+
+</html>

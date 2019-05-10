@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="keywords" content="undefined">
+  <meta name="description" content="郭志伟的前端小窝">
+  <meta name="author" content="gzw">
+  <meta name="robots" content="undefined">
+  <meta name="msapplication-TileColor" content="#455A64">
+  <meta name="theme-color" content="#455A64">
+  
+    <title>
+      
+        Angularjs简单实现现图片轮播效果 |
+          
+            sprialmint
+    </title>
+    
+      <link rel="icon" href="/favicon.ico">
+      <!-- <link rel='stylesheet' id='open-sans-css'  href='https://fonts.lug.ustc.edu.cn/css?family=Open+Sans%3A300italic%2C400italic%2C600italic%2C300%2C400%2C600&#038;subset=latin%2Clatin-ext' type='text/css' media='all' /> -->
+      
+      
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="//at.alicdn.com/t/font_596123_b7axjvh0br1z6w29.css">
+</head>
+<body>
+    
+<header id="header" class="animited clearfix">
+  <div class="header-bg"></div>
+    <h1>sprialmint <small>郭志伟的前端小窝</small></h1>
+    <button type="button" class="nav-toggle">
+       <span></span>
+       <span></span>
+       <span></span>
+    </button>
+    <nav>
+      
+      
+      <a href="/">Home</a>
+    
+      
+      <a href="/archives">Archives</a>
+    
+      
+      <a href="/life">Life</a>
+    
+      
+      <a href="/about">About</a>
+    
+    </nav>
+</header>
+    <article id="article">
+            <section>
+    <summary class="title">
+        Angularjs简单实现现图片轮播效果    </summary>
+    
+            <div class="date">
+                周五 2016-09-30 00:00
+            </div>
+            
+                <p class="sub">
+                    </p><p>#Angularjs简单实现现图片轮播效果</p>
+<p>之前用的图片轮播都是通过jq做的，但是用了ng这些都变了，首先是js的加载，在ng的模板中加js是不能直接运行的，要想运行jq的插件需要重新封装dirctive。<br><a id="more"></a><br>言归正传，不能跑题，我是要简单实现图片轮播，所以一些控制组件可能会没有，同时是通过dirctive实现的。</p>
+<p><strong>HTML：</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"slider"</span> <span class="attr">broadcast</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"slider-wrap"</span> <span class="attr">name</span>=<span class="string">"afc"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"page"</span>&gt;</span><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"../img/look2.jpg"</span> <span class="attr">alt</span>=<span class="string">""</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"page"</span>&gt;</span><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"../img/look1.jpg"</span> <span class="attr">alt</span>=<span class="string">""</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">ul</span> <span class="attr">class</span>=<span class="string">"bullet"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>slider-wrap</code>中的代码时需要加载的img文件；<code>bullet</code>是底部的圆形切换按钮。</p>
+<p><strong>CSS:</strong><br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.slider</span> &#123;</span><br><span class="line">    <span class="attribute">height</span>: <span class="number">190px</span>;</span><br><span class="line">    <span class="attribute">margin</span>: <span class="number">0</span> auto;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.slider-wrap</span> &#123;</span><br><span class="line">    <span class="attribute">height</span>: <span class="number">180px</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.page</span> &#123;</span><br><span class="line">    <span class="attribute">background-color</span>: <span class="number">#333</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.page</span> <span class="selector-tag">img</span>, <span class="selector-class">.slider</span> &#123;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">100%</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.fai</span> &#123;</span><br><span class="line">    <span class="attribute">animation</span>: fadeIn;</span><br><span class="line">    <span class="attribute">animation-duration</span>: <span class="number">1.5s</span>;</span><br><span class="line">    <span class="attribute">-webkit-animation</span>: fadeIn <span class="number">1s</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.page</span> <span class="selector-tag">img</span>, <span class="selector-class">.slider</span> &#123;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">100%</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.bullet</span> &#123;</span><br><span class="line">    <span class="attribute">position</span>: absolute;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">46px</span>;</span><br><span class="line">    <span class="attribute">padding</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">bottom</span>: <span class="number">10px</span>;</span><br><span class="line">    <span class="attribute">right</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">z-index</span>: <span class="number">2</span>;</span><br><span class="line">    <span class="attribute">left</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">margin</span>: <span class="number">0</span> auto;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-tag">bullet</span> <span class="selector-tag">li</span> &#123;</span><br><span class="line">	<span class="attribute">float</span>:left;</span><br><span class="line">    <span class="attribute">list-style</span>: none;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">10px</span>;</span><br><span class="line">    <span class="attribute">height</span>: <span class="number">10px</span>;</span><br><span class="line">    <span class="attribute">border-radius</span>: <span class="number">13px</span>;</span><br><span class="line">    <span class="attribute">margin</span>: <span class="number">0</span> <span class="number">5px</span>;</span><br><span class="line">    <span class="attribute">cursor</span>: pointer;</span><br><span class="line">    <span class="attribute">border</span>: <span class="number">1px</span> solid <span class="number">#fff</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.bullet</span> <span class="selector-tag">li</span><span class="selector-pseudo">:hover</span>, <span class="selector-class">.libg</span> &#123;</span><br><span class="line">    <span class="attribute">background</span>: <span class="number">#fff</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>JS:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">.directive(<span class="string">'broadcast'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            restrict: <span class="string">'EA'</span>,</span><br><span class="line">            link: <span class="function"><span class="keyword">function</span>(<span class="params">scope, element, attr</span>) </span>&#123;</span><br><span class="line">                <span class="comment">//获取dom</span></span><br><span class="line">                <span class="keyword">var</span> slider = angular.element(element).find(<span class="string">'div'</span>).find(<span class="string">'div'</span>),</span><br><span class="line">                    bullet = angular.element(element).find(<span class="string">'ul'</span>).children(),</span><br><span class="line">                    length = slider.length,</span><br><span class="line">                    current = <span class="number">0</span>,</span><br><span class="line">                    temp = <span class="string">''</span>,</span><br><span class="line">                    time = <span class="string">''</span>,</span><br><span class="line">                    loopSpeed = <span class="number">5000</span>,</span><br><span class="line">                    <span class="comment">//切换效果</span></span><br><span class="line">                    loop = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">                        slider.eq(current).removeClass(<span class="string">'fao'</span>).addClass(<span class="string">'fai'</span>);</span><br><span class="line">                        bullet.eq(current).removeClass(<span class="string">'libg'</span>);</span><br><span class="line">                        <span class="keyword">if</span> (current == (length - <span class="number">1</span>)) &#123;</span><br><span class="line">                            current = <span class="number">-1</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                        current += <span class="number">1</span>;</span><br><span class="line">                        slider.eq(current).removeClass(<span class="string">'fai'</span>).addClass(<span class="string">'fao'</span>);</span><br><span class="line">                        bullet.eq(current).addClass(<span class="string">'libg'</span>);</span><br><span class="line">                    &#125;;</span><br><span class="line">                slider.eq(<span class="number">0</span>).removeClass(<span class="string">'fai'</span>).addClass(<span class="string">'fao'</span>);</span><br><span class="line">                bullet.eq(<span class="number">0</span>).addClass(<span class="string">'libg'</span>);</span><br><span class="line">                time = setInterval(loop, loopSpeed);</span><br><span class="line">                <span class="comment">//手动切换效果</span></span><br><span class="line">                bullet.on(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">                    <span class="keyword">var</span> index = $(<span class="keyword">this</span>).index();</span><br><span class="line">                    slider.eq(index).removeClass(<span class="string">'fao'</span>).addClass(<span class="string">'fai'</span>);</span><br><span class="line">                    <span class="keyword">var</span> a = siblingElem(slider.eq(index));</span><br><span class="line">                    a.removeClass(<span class="string">'fai'</span>).addClass(<span class="string">'fao'</span>);</span><br><span class="line">                    bullet.eq(index).addClass(<span class="string">'libg'</span>).siblings()</span><br><span class="line">                    <span class="keyword">var</span> b = siblingElem(bullet.eq(index));</span><br><span class="line">                    b.removeClass(<span class="string">'libg'</span>);</span><br><span class="line">                    clearInterval(time);</span><br><span class="line">                    current = index;</span><br><span class="line">                    time = setInterval(loop, loopSpeed);</span><br><span class="line">                &#125;);</span><br><span class="line">                <span class="comment">//初始化</span></span><br><span class="line">                <span class="keyword">var</span> siblingElem = <span class="function"><span class="keyword">function</span>(<span class="params">elem</span>) </span>&#123;</span><br><span class="line">                    <span class="keyword">var</span> _nodes = [],</span><br><span class="line">                        _elem = elem;</span><br><span class="line">                    <span class="keyword">while</span> ((elem = elem.previousSibling)) &#123;</span><br><span class="line">                        <span class="keyword">if</span> (elem.nodeType === <span class="number">1</span>) &#123;</span><br><span class="line">                            _nodes.push(elem);</span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    elem = _elem;</span><br><span class="line">                    <span class="keyword">while</span> ((elem = elem.nextSibling)) &#123;</span><br><span class="line">                        <span class="keyword">if</span> (elem.nodeType === <span class="number">1</span>) &#123;</span><br><span class="line">                            _nodes.push(elem);</span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">return</span> _nodes;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
+<p>该轮播效果主要是通过ng的dirctive实现的，可以对东盟进行操作，效果图：</p>
+<p><img src="https://ws2.sinaimg.cn/mw690/005AePdbly1fm775cckjdj308v04yq2t.jpg" alt="demo"></p>
+                <p></p>
+                <div class="clearfix">
+                    <div class="tags pull-left">
+                        
+                            
+
+
+<span class="tag">angularjs</span> <span class="tag">轮播</span>
+                                
+                    </div>
+                    <div class="share pull-right">
+                          
+<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+   
+
+                    </div>
+                </div>
+                <div class="license">
+    <p><strong>原文链接：</strong><a href="http://www.sprialmint.com/2016/09/30/Angularjs简单实现现图片轮播效果/">http://www.sprialmint.com/2016/09/30/Angularjs简单实现现图片轮播效果/</a></p>
+    <p><strong>版权声明：</strong>自由转载-非商用-非衍生-保持署名| <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">Creative Commons BY-NC-ND 4.0</a></p>
+</div>
+                      
+   
+   <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zNTAyNC8xMTU2MA==">
+	<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+	</script>
+<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+
+</section>
+    </article>
+    
+<footer>
+    <div>&copy; 2019 gzw
+  powered_by &nbsp;<a href="http://hexo.io/" target="_blank">Hexo</a> &nbsp;theme by &nbsp;<a href="https://github.com/gzw95322/hexo-theme-stingy" target="_blank">stingy</a></div>
+    <div class="footer-menu">
+  <a href="http://www.miitbeian.gov.cn/" target="_blank">鲁ICP备16001540号</a>
+</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+
+  <link rel="stylesheet" href="/css/gallery.css">
+  <!-- fancybox is 3.x GPLv3 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+
+<script src="/js/script.js"></script>
+
+
+<div id="backtotop" class="animited pullback"><em></em><i></i><span>BACK<br>TO<br>TO<br>TOP</span></div>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?faa764cb53bbf9988c91a8fa2857a4d7";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+   
+    
+</body>
+
+</html>

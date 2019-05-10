@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="keywords" content="undefined">
+  <meta name="description" content="郭志伟的前端小窝">
+  <meta name="author" content="gzw">
+  <meta name="robots" content="undefined">
+  <meta name="msapplication-TileColor" content="#455A64">
+  <meta name="theme-color" content="#455A64">
+  
+    <title>
+      
+        html聊天页面加载历史记录定位不准确问题解决 |
+          
+            sprialmint
+    </title>
+    
+      <link rel="icon" href="/favicon.ico">
+      <!-- <link rel='stylesheet' id='open-sans-css'  href='https://fonts.lug.ustc.edu.cn/css?family=Open+Sans%3A300italic%2C400italic%2C600italic%2C300%2C400%2C600&#038;subset=latin%2Clatin-ext' type='text/css' media='all' /> -->
+      
+      
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="//at.alicdn.com/t/font_596123_b7axjvh0br1z6w29.css">
+</head>
+<body>
+    
+<header id="header" class="animited clearfix">
+  <div class="header-bg"></div>
+    <h1>sprialmint <small>郭志伟的前端小窝</small></h1>
+    <button type="button" class="nav-toggle">
+       <span></span>
+       <span></span>
+       <span></span>
+    </button>
+    <nav>
+      
+      
+      <a href="/">Home</a>
+    
+      
+      <a href="/archives">Archives</a>
+    
+      
+      <a href="/life">Life</a>
+    
+      
+      <a href="/about">About</a>
+    
+    </nav>
+</header>
+    <article id="article">
+            <section>
+    <summary class="title">
+        html聊天页面加载历史记录定位不准确问题解决    </summary>
+    
+            <div class="date">
+                周五 2017-11-17 00:00
+            </div>
+            
+                <p class="sub">
+                    <blockquote>
+<p>当用html去写聊天功能的时候会遇到加载聊天记录后直接滚动到页面最顶部的问题,但是实际的需求是不需要滚动的,对此,整理一个可行的办法.</p>
+</blockquote>
+<a id="more"></a>
+</p><p>功能的实现主要是通过<code>window.scrollTo</code>方法实现的,在页面添加一个滚动事件监听,同时获取窗口的高度,当滚动到一定距离时向页面中追加内容,再获取添加内容后的高度,得到两个高度值的高度差,最后通过<code></code>window.scrollTo`滚动到指定的位置.</p>
+<h2 id="Javascript"><a href="#Javascript" class="headerlink" title="Javascript"></a>Javascript</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">var</span> chat_list = <span class="built_in">document</span>.getElementById(<span class="string">"chat_list"</span>);</span><br><span class="line"><span class="keyword">var</span> stpl = <span class="string">''</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">1</span>; i &lt;= <span class="number">10</span>; i++) &#123;</span><br><span class="line">  stpl += <span class="string">'&lt;div&gt;'</span> + random_string() + <span class="string">'&lt;/div&gt;'</span></span><br><span class="line">&#125;</span><br><span class="line">chat_list.insertAdjacentHTML(<span class="string">'afterbegin'</span>, stpl);</span><br><span class="line"><span class="built_in">window</span>.onscroll = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> scrollTop = <span class="built_in">document</span>.documentElement.scrollTop === <span class="number">0</span> ? <span class="built_in">document</span>.body.scrollTop : <span class="built_in">document</span>.documentElement.scrollTop;</span><br><span class="line">  <span class="keyword">var</span> tpl = <span class="string">''</span>;</span><br><span class="line">  <span class="keyword">if</span> (scrollTop &lt; <span class="number">10</span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> scrollHeight = <span class="built_in">document</span>.body.scrollHeight;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">1</span>; i &lt;= <span class="number">10</span>; i++) &#123;</span><br><span class="line">      tpl += <span class="string">'&lt;div&gt;'</span> + random_string() + <span class="string">'&lt;/div&gt;'</span></span><br><span class="line">    &#125;</span><br><span class="line">    chat_list.insertAdjacentHTML(<span class="string">'afterbegin'</span>, tpl);</span><br><span class="line">    <span class="keyword">var</span> scrollHeight2 = <span class="built_in">document</span>.body.scrollHeight;</span><br><span class="line">    <span class="comment">// 加载防跳转</span></span><br><span class="line">    <span class="built_in">window</span>.scrollTo(<span class="number">0</span>, scrollHeight2 - scrollHeight);</span><br><span class="line">  &#125;</span><br><span class="line">  scrollTop = <span class="literal">null</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">random_string</span>(<span class="params">len</span>) </span>&#123;</span><br><span class="line">  len = len || <span class="number">32</span>;</span><br><span class="line">  <span class="keyword">var</span> chars = <span class="string">'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz0123456789'</span>;</span><br><span class="line">  <span class="keyword">var</span> maxPos = chars.length;</span><br><span class="line">  <span class="keyword">var</span> pwd = <span class="string">''</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">    pwd += chars.charAt(<span class="built_in">Math</span>.floor(<span class="built_in">Math</span>.random() * maxPos));</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> pwd;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<iframe scrolling="no" width="100%" height="500" src="//jsfiddle.net/sprialmint/cbmuxogb/embedded/html,css,result/dark" frameborder="0" allowfullscreen></iframe>
+                <p></p>
+                <div class="clearfix">
+                    <div class="tags pull-left">
+                        
+                            
+
+
+<span class="tag">window.scrollTo</span> <span class="tag">定位</span>
+                                
+                    </div>
+                    <div class="share pull-right">
+                          
+<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+   
+
+                    </div>
+                </div>
+                <div class="license">
+    <p><strong>原文链接：</strong><a href="http://www.sprialmint.com/2017/11/17/html聊天页面加载历史记录定位不准确问题解决/">http://www.sprialmint.com/2017/11/17/html聊天页面加载历史记录定位不准确问题解决/</a></p>
+    <p><strong>版权声明：</strong>自由转载-非商用-非衍生-保持署名| <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">Creative Commons BY-NC-ND 4.0</a></p>
+</div>
+                      
+   
+   <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zNTAyNC8xMTU2MA==">
+	<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+	</script>
+<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+
+</section>
+    </article>
+    
+<footer>
+    <div>&copy; 2019 gzw
+  powered_by &nbsp;<a href="http://hexo.io/" target="_blank">Hexo</a> &nbsp;theme by &nbsp;<a href="https://github.com/gzw95322/hexo-theme-stingy" target="_blank">stingy</a></div>
+    <div class="footer-menu">
+  <a href="http://www.miitbeian.gov.cn/" target="_blank">鲁ICP备16001540号</a>
+</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+
+  <link rel="stylesheet" href="/css/gallery.css">
+  <!-- fancybox is 3.x GPLv3 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+
+<script src="/js/script.js"></script>
+
+
+<div id="backtotop" class="animited pullback"><em></em><i></i><span>BACK<br>TO<br>TO<br>TOP</span></div>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?faa764cb53bbf9988c91a8fa2857a4d7";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+   
+    
+</body>
+
+</html>
